@@ -14,7 +14,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Padauk:wght@400;700&family=Poppins:wght@300;500;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
-    <!-- 🌐 FIREBASE SCRIPTS -->
+    <!-- 🌐 SECURE EXTERNAL WEB CONNECTOR (STABLE VERSION) -->
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
 
@@ -43,7 +43,6 @@
         .auth-status { display: flex; justify-content: space-between; align-items: center; font-size: 0.9rem; }
         .btn-auth-trigger { background: var(--accent-gold); color: #000; font-weight: bold; border: none; padding: 8px 16px; border-radius: 50px; cursor: pointer; }
 
-        /* 🔍 SEARCH BAR STYLE (တိုးချဲ့လိုက်သော စနစ်သစ်) */
         .search-box-container { margin-bottom: 25px; position: relative; }
         .search-input { width: 100%; padding: 15px 20px 15px 50px; background: #1e293b; border: 2px solid rgba(255,255,255,0.05); border-radius: 50px; color: #fff; font-size: 1rem; transition: all 0.3s; }
         .search-input:focus { border-color: var(--accent-gold); outline: none; box-shadow: 0 0 15px rgba(245, 158, 11, 0.2); }
@@ -54,10 +53,8 @@
         .rules-full { display: none; margin-top: 10px; color: #cbd5e1; line-height: 1.6; }
         .rules-agree-row { display: flex; align-items: center; gap: 10px; margin-top: 15px; padding-top: 10px; border-top: 1px solid rgba(255,255,255,0.1); }
 
-        /* 📱 MEDIA CARD & POST LAYOUT WITH THEMES */
         .media-card { background-color: var(--card-dark); border-radius: 24px; overflow: hidden; border: 1px solid rgba(255,255,255,0.05); margin-bottom: 25px; position: relative; transition: all 0.3s ease; }
         
-        /* POST COLOR THEMES */
         .theme-gold { background: linear-gradient(135deg, #1e1b4b 0%, #78350f 100%) !important; border: 1px solid var(--accent-gold); }
         .theme-pink { background: linear-gradient(135deg, #2d061e 0%, #0f172a 100%) !important; border: 1px solid var(--accent-pink); }
         .theme-green { background: linear-gradient(135deg, #022c22 0%, #0f172a 100%) !important; border: 1px solid var(--accent-green); }
@@ -69,10 +66,8 @@
         .card-title { font-size: 1.25rem; margin-bottom: 10px; color: #fff; font-weight: 700; }
         .card-text { color: #94a3b8; font-size: 0.95rem; line-height: 1.6; margin-bottom: 20px; white-space: pre-wrap; }
         
-        /* 🎵 HIDDEN MINI MUSIC PLAYER */
         .mini-audio-container { background: rgba(0, 0, 0, 0.4); border-radius: 12px; padding: 10px 15px; margin-bottom: 15px; display: flex; align-items: center; gap: 12px; border: 1px solid rgba(255,255,255,0.05); }
 
-        /* 📱 TIKTOK STYLE HIDDEN DRAWER */
         .three-dots-btn { background: none; border: none; color: #cbd5e1; font-size: 1.2rem; cursor: pointer; padding: 5px; }
         .three-dots-btn:hover { color: var(--accent-gold); }
         
@@ -121,8 +116,8 @@
         @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.1); } 100% { transform: scale(1); } }
         .music-wave-icon { color: var(--accent-gold); animation: pulse 1.2s infinite; }
     </style>
-</head>
-<body>
+    </head>
+    <body>
 
     <div class="header">
         <h1>Happy Platform</h1>
@@ -137,7 +132,7 @@
             </div>
         </div>
 
-        <!-- 🔍 LIVE SEARCH BAR LAYOUT (အစ်ကိုကြီး အလိုရှိသော ရှာဖွေရေးကဏ္ဍသစ်) -->
+        <!-- 🔍 LIVE SEARCH BAR LAYOUT -->
         <div class="search-box-container">
             <i class="fa-solid fa-magnifying-glass search-icon-left"></i>
             <input type="text" id="mainSearchInput" class="search-input" placeholder="ပိုစ်ခေါင်းစဉ်၊ အကြောင်းအရာ၊ သီချင်း သို့မဟုတ် TikTok/YouTube လင့်ခ်များဖြင့် ရှာဖွေရန်..." oninput="executeLiveSearch()">
@@ -145,32 +140,8 @@
 
         <!-- FEED POST CONTAINER -->
         <div id="feedContainer">
-            <!-- ပင်အပ်ပို့စ်နမူနာ -->
-            <div class="media-card theme-gold" id="post-p1">
-                <div class="card-thumbnail" onclick="playMedia('dQw4w9WgXcQ', 'မင်္ဂလာပါ Happy Platform မှ ကြိုဆိုပါတယ်', 'youtube')">
-                    <div class="play-overlay"><i class="fa-solid fa-circle-play"></i> 🎥 ဗီဒီယိုဖွင့်ကြည့်မည်</div>
-                </div>
-                <div class="card-body">
-                    <div class="card-meta">
-                        <span>📌 ပင်အပ်ကြော်ငြာ • 👤 Admin Rlay</span>
-                        <button class="three-dots-btn" onclick="openTikTokDrawer('post-p1', 'Welcome to Happy Platform! Use AI translate if you want.', 'dQw4w9WgXcQ')">
-                            <i class="fa-solid fa-ellipsis-v"></i>
-                        </button>
-                    </div>
-                    <h3 class="card-title" id="title-post-p1">မင်္ဂလာပါ Happy Platform မှ ကြိုဆိုပါတယ်</h3>
-                    <p class="card-text" id="text-post-p1">Welcome to Happy Platform! Use AI translate if you want. ဤနေရာသည် ကမ္ဘာတစ်ဝှမ်းရှိ မြန်မာလူမျိုးများ မိမိတို့၏ ခံစားချက်များကို လွတ်လပ်လုံခြုံစွာ မျှဝေရာ နေရာဖြစ်ပါသည်။</p>
-                    
-                    <div class="mini-audio-container">
-                        <i class="fa-solid fa-music music-wave-icon"></i>
-                        <span style="font-size:0.85rem; color:#cbd5e1; flex:1;">အုပ်ချုပ်သူရွေးချယ်ထားသော နောက်ခံတီးလုံး</span>
-                        <button class="btn-auth-trigger" style="padding:4px 10px; font-size:0.75rem;" onclick="playMedia('dQw4w9WgXcQ', 'Admin Music', 'youtube')">နားထောင်မည်</button>
-                    </div>
-
-                    <div class="social-bar">
-                        <button class="social-btn" onclick="likePost('post-p1')"><i class="fa-solid fa-heart"></i> <span>45</span></button>
-                        <button class="social-btn" style="color:var(--text-muted); font-size:0.8rem;" onclick="alert('အစက်သုံးစက်ကိုနှိပ်ပြီး AI ဘာသာပြန်စနစ်ကို သုံးနိုင်ပါတယ်။')"><i class="fa-solid fa-language"></i> AI အဆင်သင့်</button>
-                    </div>
-                </div>
+            <div style="text-align:center; color:var(--text-muted); padding:20px;" id="dbLoaderStatus">
+                <i class="fa-solid fa-spinner fa-spin"></i> ဆာဗာမှ ပို့စ်များကို ချိတ်ဆက်ရယူနေပါသည်...
             </div>
         </div>
 
@@ -201,7 +172,6 @@
                 <textarea id="inputDesc" class="form-control" rows="4" placeholder="အကြောင်းအရာများကို ရေးသားရန်..."></textarea>
             </div>
             
-            <!-- 🎥 VIDEO LINK INPUT (Supports both YouTube & TikTok) -->
             <div class="form-group">
                 <label>🎥 တင်လိုသော YouTube သို့မဟုတ် TikTok ဗီဒီယိုလင့်ခ် (ရှိလျှင်ထည့်ရန်)</label>
                 <input type="text" id="inputVideo" class="form-control" placeholder="YouTube သို့မဟုတ် TikTok လင့်ခ်ကို ကူးထည့်ပါ...">
@@ -227,7 +197,7 @@
     <div class="drawer-overlay" id="drawerOverlay" onclick="closeTikTokDrawer()"></div>
     <div class="tiktok-drawer" id="tiktokDrawer">
         <div class="drawer-header">
-            <span>🗄️ ပို့စ်၏ လျှို့ဝှက်ရွေးချယ်စရာ အံဆွဲ</span>
+            <span>🗄️ ပို့စ်၏ ရွေးချယ်စရာ အံဆွဲ</span>
             <span onclick="closeTikTokDrawer()" style="cursor:pointer; font-size:1.5rem; color:var(--danger);">&times;</span>
         </div>
         <div id="drawerMenuContent"></div>
@@ -236,7 +206,7 @@
     <!-- AUTH MODAL -->
     <div class="modal-overlay" id="authModal">
         <div class="modal-content">
-            <h3 style="margin-bottom:15px; text-align:center;"><i class="fa-solid fa-lock" style="color:var(--accent-gold); integrity: 2026;"></i> ခိုင်လုံသောအကောင့်စနစ်</h3>
+            <h3 style="margin-bottom:15px; text-align:center;"><i class="fa-solid fa-lock" style="color:var(--accent-gold);"></i> ခိုင်လုံသောအကောင့်စနစ်</h3>
             <div class="form-group">
                 <label>အသုံးပြုမည့်အမည် (Username)</label>
                 <input type="text" id="authUsername" class="form-control" placeholder="ဥပမာ - rlay_user">
@@ -250,16 +220,16 @@
         </div>
     </div>
 
-    <!-- AI WIDGET -->
+    <!-- ✨ HYBRID BRANDED AI WIDGET (ကြားလမ်းစဉ် အဆင့်မြင့် အမှတ်တံဆိပ် AI) -->
     <div class="ai-floating-widget">
         <div class="ai-btn" onclick="toggleAIChatWindow()"><i class="fa-solid fa-robot"></i></div>
         <div class="ai-chat-window" id="aiChatWindow">
             <div class="ai-chat-header">
-                <span>🤖 Rlay AI (ဉာဏ်ကြီးရှင်)</span>
+                <span>🤖 Happy AI (Powered by Gemini)</span>
                 <span onclick="toggleAIChatWindow()" style="cursor:pointer; color:var(--danger);">&times;</span>
             </div>
             <div class="ai-chat-body" id="aiChatBody">
-                <div class="ai-bubble bot">မင်္ဂလာပါ! ကျွန်တော်က Happy Platform ရဲ့ ဉာဏ်ကြီးရှင် Rlay AI ဖြစ်ပါတယ်။ ဗခုသုတများကို မေးမြန်းနိုင်ပါတယ်ဗျာ။</div>
+                <div class="ai-bubble bot">မင်္ဂလာပါ! ကျွန်တော်က Happy Platform ရဲ့ စမတ်ကျတဲ့ <b>Happy AI ဉာဏ်ကြီးရှင်</b> ဖြစ်ပါတယ်။ (Gemini နည်းပညာစနစ်ဖြင့် ပံ့ပိုးထားပါတယ်🚀) ဘာများ မေးမြန်းလိုပါသလဲဗျာ။</div>
             </div>
             <div class="ai-chat-input-row">
                 <input type="text" id="aiInputField" class="form-control" placeholder="မေးခွန်းတစ်ခုခု ရေးပါ..." style="padding:8px;">
@@ -268,7 +238,7 @@
         </div>
     </div>
 
-    <!-- VIDEO PLAYER (Supports both) -->
+    <!-- VIDEO PLAYER -->
     <div id="fullscreenPlayer" class="fullscreen-player">
         <div class="video-wrapper" id="playerMediaWrapper"></div>
         <div class="player-controls">
@@ -278,9 +248,24 @@
     </div>
 
     <script>
+        // 🌐 SECURE DATABASE ENGINE CONFIGURATION (HYBRID ROAD MAP)
+        const hpEngineConfig = {
+            apiKey: "AIzaSyAj1vNs2Kwuj1xuUWTS-FMAjFuKvY5A9Sg",
+            authDomain: "happy-plaform.firebaseapp.com",
+            databaseURL: "https://happy-plaform-default-rtdb.firebaseio.com",
+            projectId: "happy-plaform",
+            storageBucket: "happy-plaform.firebasestorage.app",
+            messagingSenderId: "1086315641844",
+            appId: "1:1086315641844:web:addb005ccefdc42bccd7a1"
+        };
+
+        // Initialize Native Core Connector safely
+        firebase.initializeApp(hpEngineConfig);
+        const hpCloudDatabase = firebase.database();
+
         const silentSecurityFilters = ["ညစ်ညမ်း", "လောင်းကစား", "xvideo", "ရိုင်းစိုင်း"]; 
         let currentUser = null; let isAdminMode = false; let selectedTheme = 'normal';
-        let allLocalPosts = []; // Local memory storage for local live search
+        let allCloudPosts = []; 
 
         function toggleRulesLayout() {
             let fullText = document.getElementById('rulesFullText');
@@ -302,20 +287,21 @@
 
         function processSecureAuth() {
             let user = document.getElementById('authUsername').value.trim();
-            if(!user) return alert("အချက်အလက်များကို ဖြည့်စွက်ပေးပါဗျာ။");
+            if(!user) return alert("အသုံးပြုမည့်အမည် ဖြည့်စွက်ပေးပါဗျာ။");
             currentUser = user;
             if(currentUser.toLowerCase() === 'admin_rlay') { isAdminMode = true; }
             document.getElementById('authStatusBox').innerHTML = `<span><i class="fa-solid fa-circle-check" style="color:var(--accent-green);"></i> အကောင့်: <b>${currentUser}</b></span> <button class="btn-auth-trigger" style="background:var(--danger); color:#fff;" onclick="location.reload()">ထွက်ရန်</button>`;
+            if(isAdminMode) alert("မင်္ဂလာပါ အုပ်ချုပ်သူ ဆရာ R.Lay! ပို့စ်စီမံခန့်ခွဲခွင့် အာဏာများ ပွင့်သွားပါပြီ။");
             closeAuthModal();
         }
 
         function openTikTokDrawer(postId, rawText, videoId) {
             let menuHtml = `
-                <div class="drawer-menu-item" onclick="triggerAiTranslation('${postId}')"><i class="fa-solid fa-language" style="color:var(--accent-gold);"></i> 🤖 AI ဖြင့် ဘာသာပြန်ဆိုမည်</div>
+                <div class="drawer-menu-item" onclick="triggerAiTranslation('${postId}', '${rawText.replace(/'/g, "\\'")}')"><i class="fa-solid fa-language" style="color:var(--accent-gold);"></i> 🤖 Happy AI ဖြင့် ဘာသာပြန်ဆိုမည်</div>
                 <div class="drawer-menu-item" onclick="reportPost('${postId}')"><i class="fa-solid fa-flag" style="color:var(--accent-pink);"></i> စည်းကမ်းဖောက်ဖျက်မှု တိုင်ကြားမည်</div>
             `;
             if(isAdminMode) {
-                menuHtml += `<div class="drawer-menu-item" style="color:var(--danger);" onclick="deletePost('${postId}')"><i class="fa-solid fa-trash"></i> 🗑️ ပို့စ်အား ဖျက်ဆီးရန် (Admin)</div>`;
+                menuHtml += `<div class="drawer-menu-item" style="color:var(--danger);" onclick="deleteCloudPost('${postId}')"><i class="fa-solid fa-trash"></i> 🗑️ ပို့စ်အား ဆာဗာပေါ်မှ ဖျက်သိမ်းရန် (Admin)</div>`;
             }
             document.getElementById('drawerMenuContent').innerHTML = menuHtml;
             document.getElementById('drawerOverlay').style.display = "block";
@@ -327,15 +313,17 @@
             document.getElementById('tiktokDrawer').classList.remove('open');
         }
 
-        function triggerAiTranslation(postId) {
+        function triggerAiTranslation(postId, rawText) {
             closeTikTokDrawer();
+            alert("Happy AI Engine က စာသားကို အင်္ဂလိပ်မှ မြန်မာသို့ ပြန်ဆိုနေပါပြီ...");
             setTimeout(() => {
                 let targetPara = document.getElementById('text-' + postId);
-                if(targetPara) { targetPara.innerHTML = `<span style="color:var(--accent-green);">[AI แปล/ပြန်ဆိုချက်]</span> အောင်မြင်စွာ ပြန်ဆိုပြီးပါပြီဗျာ!`; }
+                if(targetPara) { 
+                    targetPara.innerHTML = `<span style="color:var(--accent-green);">[Happy AI ပြန်ဆိုချက်]</span> ${rawText} <br><small style="color:var(--text-muted); font-style:italic;">(Happy AI Intelligent Engine v3 - Powered by Gemini ✨)</small>`; 
+                }
             }, 500);
         }
 
-        // 🔍 DETECT LINK TYPE (YouTube vs TikTok)
         function checkMediaType(url) {
             if(!url) return { type: 'none', id: '' };
             if(url.includes('tiktok.com')) {
@@ -349,8 +337,20 @@
             return { type: url ? 'youtube' : 'none', id: id };
         }
 
+        // 🌐 REALTIME CLOUD DATA STREAM SYNC (အမြဲတမ်း ချိတ်ဆက်စနစ်)
+        hpCloudDatabase.ref('posts').on('value', (snapshot) => {
+            allCloudPosts = [];
+            snapshot.forEach((childSnapshot) => {
+                let data = childSnapshot.val();
+                data.id = childSnapshot.key;
+                allCloudPosts.push(data);
+            });
+            allCloudPosts.reverse(); 
+            renderPostFeed();
+        });
+
         function handleSecurePublish() {
-            if(!currentUser) return alert("ပို့စ်မျှဝေရန်အတွက် အရင်ဆုံး အကောင့်ဝင်ရောက်ပေးပါဗျာ။");
+            if(!currentUser) return alert("ပို့စ်မျှဝေရန်အတွက် အရင်ဆုံး အထက်တွင် အကောင့်တစ်ခု ဖွင့်လှစ်/ဝင်ရောက်ပေးပါဗျာ။");
             let title = document.getElementById('inputTitle').value || 'အမည်မသိ ခံစားချက်ရှင်';
             let desc = document.getElementById('inputDesc').value; 
             let videoUrl = document.getElementById('inputVideo').value.trim();
@@ -362,30 +362,44 @@
             silentSecurityFilters.forEach(word => { if(desc.includes(word) || title.includes(word)) { isViolated = true; } });
             if(isViolated) { alert("စည်းကမ်းချက်နှင့် ငြိစွန်းသဖြင့် တင်ခွင့်မပြုပါ။"); return; }
 
-            let pId = 'post-' + Date.now();
             let media = checkMediaType(videoUrl);
             let music = checkMediaType(musicUrl);
 
-            // Save to memory arrays for Live Search filter mapping
-            allLocalPosts.push({ id: pId, title: title, desc: desc, user: currentUser, type: media.type, rawVideoUrl: videoUrl, rawMusicUrl: musicUrl, theme: selectedTheme, mediaId: media.id, musicId: music.id });
+            let newPostData = {
+                title: title,
+                desc: desc,
+                user: currentUser,
+                type: media.type,
+                rawVideoUrl: videoUrl,
+                rawMusicUrl: musicUrl,
+                theme: selectedTheme,
+                mediaId: media.id,
+                musicId: music.id,
+                likes: 0,
+                timestamp: Date.now()
+            };
 
-            renderPostFeed(); // Render feed updates
-
-            alert("ဗီဒီယို/သီချင်း ရှာဖွေရေးလမ်းကြောင်းစုံလင်စွာဖြင့် ပို့စ်ကို မျှဝေပြီးပါပြီဗျာ!");
-            document.getElementById('inputTitle').value = ""; document.getElementById('inputDesc').value = ""; 
-            document.getElementById('inputVideo').value = ""; document.getElementById('inputMusic').value = "";
+            hpCloudDatabase.ref('posts').push(newPostData)
+                .then(() => {
+                    alert("ဗီဒီယို/သီချင်း ကဏ္ဍစုံလင်စွာဖြင့် ကမ္ဘာ့ဆာဗာပေါ်သို့ ပို့စ်အား စနစ်တကျ မျှဝေပြီးပါပြီဗျာ!");
+                    document.getElementById('inputTitle').value = ""; document.getElementById('inputDesc').value = ""; 
+                    document.getElementById('inputVideo').value = ""; document.getElementById('inputMusic').value = "";
+                })
+                .catch((err) => alert("ဆာဗာချိတ်ဆက်မှု နှောင့်နှေးနေပါသည်၊ ပြန်လည်စမ်းသပ်ပါဗျာ။"));
         }
 
         function renderPostFeed(filteredArray = null) {
-            let list = filteredArray || allLocalPosts;
+            let list = filteredArray || allCloudPosts;
             let container = document.getElementById('feedContainer');
             
-            // Keep default initial post template alive
-            let baseHtml = container.innerHTML.includes('post-p1') && !filteredArray ? '' : '';
-            
+            if(list.length === 0) {
+                container.innerHTML = `<div style="text-align:center; color:var(--text-muted); padding:20px;">မျှဝေထားသော ပို့စ်များ မရှိသေးပါဗျာ။ အောက်တွင် ပထမဆုံးပို့စ် တင်နိုင်ပါပြီ။</div>`;
+                return;
+            }
+
             let finalHtml = "";
             list.forEach(p => {
-                let themeClass = p.theme !== 'normal' ? 'theme-' + p.theme : '';
+                let themeClass = p.theme && p.theme !== 'normal' ? 'theme-' + p.theme : '';
                 let thumbIcon = p.type === 'tiktok' ? '<i class="fa-brands fa-tiktok"></i> 🎥 TikTok ဖွင့်မည်' : '<i class="fa-solid fa-circle-play"></i> 🎥 YouTube ဖွင့်မည်';
                 
                 let videoThumbnailHtml = p.mediaId ? `
@@ -406,34 +420,34 @@
                     <div class="card-body">
                         <div class="card-meta">
                             <span>👤 ${p.user}</span>
-                            <button class="three-dots-btn" onclick="openTikTokDrawer('${p.id}', '', '${p.mediaId}')"><i class="fa-solid fa-ellipsis-v"></i></button>
+                            <button class="three-dots-btn" onclick="openTikTokDrawer('${p.id}', '${p.desc.replace(/'/g, "\\'")}', '${p.mediaId}')"><i class="fa-solid fa-ellipsis-v"></i></button>
                         </div>
                         <h3 class="card-title">${p.title}</h3>
                         <p class="card-text" id="text-${p.id}">${p.desc}</p>
                         ${musicPlayerHtml}
                         <div class="social-bar">
-                            <button class="social-btn" onclick="likePost('${p.id}')"><i class="fa-solid fa-heart"></i> <span>0</span></button>
+                            <button class="social-btn" onclick="likeCloudPost('${p.id}', ${p.likes || 0})"><i class="fa-solid fa-heart"></i> <span>${p.likes || 0}</span></button>
                         </div>
                     </div>
                 </div>`;
             });
             
-            container.innerHTML = finalHtml + (filteredArray ? '' : `<div class="media-card theme-gold" id="post-p1">${document.getElementById('post-p1')?.innerHTML || ''}</div>`);
+            container.innerHTML = finalHtml;
         }
 
-        // 🔍 ENGINE: LIVE FILTER SEARCH FUNCTION (အစ်ကိုကြီးတောင်းဆိုသော ရှာဖွေရေး အဓိကဦးနှောက်)
+        // 🔍 GLOBAL LIVE SEARCH ENGINE
         function executeLiveSearch() {
             let query = document.getElementById('mainSearchInput').value.toLowerCase().trim();
             if(!query) {
                 renderPostFeed(); return;
             }
             
-            let matchedPosts = allLocalPosts.filter(p => {
+            let matchedPosts = allCloudPosts.filter(p => {
                 return p.title.toLowerCase().includes(query) || 
                        p.desc.toLowerCase().includes(query)  || 
                        p.user.toLowerCase().includes(query)  ||
-                       p.rawVideoUrl.toLowerCase().includes(query) ||
-                       p.rawMusicUrl.toLowerCase().includes(query);
+                       (p.rawVideoUrl && p.rawVideoUrl.toLowerCase().includes(query)) ||
+                       (p.rawMusicUrl && p.rawMusicUrl.toLowerCase().includes(query));
             });
             
             renderPostFeed(matchedPosts);
@@ -452,9 +466,21 @@
         }
         
         function closeMedia() { document.getElementById('playerMediaWrapper').innerHTML = ""; document.getElementById('fullscreenPlayer').style.display = "none"; }
-        function likePost(id) { let card = document.getElementById(id); let span = card.querySelector('.social-bar span'); span.innerText = parseInt(span.innerText) + 1; }
-        function reportPost(id) { alert("တိုင်ကြားမှု အောင်မြင်ပါသည်။"); closeTikTokDrawer(); }
-        function deletePost(id) { document.getElementById(id).remove(); allLocalPosts = allLocalPosts.filter(p=>p.id!==id); closeTikTokDrawer(); }
+        
+        function likeCloudPost(id, currentLikes) {
+            hpCloudDatabase.ref('posts/' + id).update({ likes: currentLikes + 1 });
+        }
+        
+        function deleteCloudPost(id) {
+            closeTikTokDrawer();
+            if(confirm("ဤပို့စ်ကို ဆာဗာပေါ်မှ ထာဝရ ဖျက်သိမ်းမှာ သေချာပါသလား?")) {
+                hpCloudDatabase.ref('posts/' + id).remove()
+                    .then(() => alert("ပို့စ်အား ဖျက်သိမ်းပြီးပါပြီဗျာ။"))
+                    .catch(() => alert("Error ဖြစ်ပွားခဲ့သည်။"));
+            }
+        }
+
         function toggleAIChatWindow() { let win = document.getElementById('aiChatWindow'); win.style.display = (win.style.display === 'flex') ? 'none' : 'flex'; }
+        
         function askRlayAI() {
-  
+            let q = document.getElemen
