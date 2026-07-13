@@ -116,8 +116,8 @@
         
         @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.1); } 100% { transform: scale(1); } }
     </style>
-  </head>
-  <body>
+</head>
+<body>
 
     <div class="header">
         <h1>Happy Platform</h1>
@@ -134,12 +134,15 @@
 
         <!-- FEED POST CONTAINER -->
         <div id="feedContainer">
-            <!-- ပင်အပ်ပို့စ်နမူနာ (TikTok Drawer စနစ်ပါဝင်ပြီး) -->
+            <!-- ပင်အပ်ပို့စ်နမူနာ (ဗီဒီယိုရော၊ တီးလုံးပါ တွဲဖက်ပါဝင်ပြီး) -->
             <div class="media-card theme-gold" id="post-p1">
+                <!-- ပို့စ်၏ ဗီဒီယိုနှိပ်ရန်နေရာ -->
+                <div class="card-thumbnail" onclick="playMedia('dQw4w9WgXcQ', 'မင်္ဂလာပါ Happy Platform မှ ကြိုဆိုပါတယ်')">
+                    <div class="play-overlay"><i class="fa-solid fa-circle-play"></i> 🎥 ဗီဒီယိုဖွင့်ကြည့်မည်</div>
+                </div>
                 <div class="card-body">
                     <div class="card-meta">
                         <span>📌 ပင်အပ်ကြော်ငြာ • 👤 Admin Rlay</span>
-                        <!-- 📱 ဤခလုတ်သည် TikTok ကဲ့သို့ လျှို့ဝှက်အံဆွဲကို ဖွင့်ပေးပါမည် -->
                         <button class="three-dots-btn" onclick="openTikTokDrawer('post-p1', 'Welcome to Happy Platform! Use AI translate if you want.', 'dQw4w9WgXcQ')">
                             <i class="fa-solid fa-ellipsis-v"></i>
                         </button>
@@ -162,7 +165,7 @@
             </div>
         </div>
 
-        <!-- POST UPLOAD FORM -->
+        <!-- POST UPLOAD FORM (ဗီဒီယိုကဏ္ဍ ဖြည့်စွက်ပြီး) -->
         <div class="upload-section">
             <h2 style="font-size:1.3rem; margin-bottom:15px;"><i class="fa-solid fa-square-plus" style="color:var(--accent-gold);"></i> မျှဝေလိုသည်များကို တင်ရန်</h2>
             
@@ -188,9 +191,17 @@
                 <label>မျှဝေလိုသော အကြောင်းအရာများ (စာသား / အင်္ဂလိပ်စာလည်း ရေးနိုင်သည်)</label>
                 <textarea id="inputDesc" class="form-control" rows="4" placeholder="အကြောင်းအရာများကို ရေးသားရန်..."></textarea>
             </div>
+            
+            <!-- 🎥 NEW VIDEO LINK INPUT (အစ်ကိုကြီး ဖြည့်စွက်ခိုင်းသော ကဏ္ဍအသစ်) -->
+            <div class="form-group">
+                <label>🎥 တင်လိုသော YouTube ဗီဒီယိုလင့်ခ် (ရှိလျှင်ထည့်ရန်)</label>
+                <input type="text" id="inputVideo" class="form-control" placeholder="YouTube ဗီဒီယိုလင့်ခ်ကို ဤနေရာတွင် ထည့်ပါ...">
+            </div>
+
+            <!-- 🎵 MUSIC LINK INPUT -->
             <div class="form-group">
                 <label>🎵 တွဲဖက်လိုသော YouTube သီချင်းနောက်ခံလင့်ခ် (ရှိလျှင်ထည့်ရန်)</label>
-                <input type="text" id="inputVideo" class="form-control" placeholder="YouTube ဗီဒီယို သို့မဟုတ် သီချင်းလင့်ခ် ကူးထည့်ရန်...">
+                <input type="text" id="inputMusic" class="form-control" placeholder="နောက်ခံတီးလုံးအတွက် YouTube လင့်ခ် ထည့်ရန်...">
             </div>
             
             <!-- 🎨 POST COLOR THEME SELECTOR -->
@@ -294,18 +305,17 @@
             currentUser = user;
             if(currentUser.toLowerCase() === 'admin_rlay') { isAdminMode = true; }
             document.getElementById('authStatusBox').innerHTML = `<span><i class="fa-solid fa-circle-check" style="color:var(--accent-green);"></i> အကောင့်: <b>${currentUser}</b></span> <button class="btn-auth-trigger" style="background:var(--danger); color:#fff;" onclick="location.reload()">ထွက်ရန်</button>`;
-            if(isAdminMode) { alert("မင်္ဂလာပါ အုပ်ချုပ်သူ ဆရာ R.Lay! အံဆွဲထဲတွင် ပို့စ်ဖျက်ခွင့် ခလုတ်များ ပွင့်သွားပါပြီ။"); }
+            if(isAdminMode) { alert("မင်္ဂလာပါ အုပ်ချုပ်သူ ဆရာ R.Lay! အံဆွဲထဲတွင် ပို့စ်ဖျက်ခုတ်ခလုတ်များ ပွင့်သွားပါပြီ။"); }
             closeAuthModal();
         }
 
-        /* 📱 TIKTOK DRAWER SYSTEM FUNCTIONS */
         function openTikTokDrawer(postId, rawText, videoId) {
             activeTargetPostId = postId; activeTargetText = rawText; activeTargetVideoId = videoId;
             let menuHtml = `
-                <div class="drawer-menu-item" onclick="triggerAiTranslation()"><i class="fa-solid fa-language" style="color:var(--accent-gold);"></i> 🤖 AI ဖြင့် မြန်မာဘာသာသို့ ပြန်ဆိုမည်</div>
+                <div class="drawer-menu-item" onclick="triggerAiTranslation('${postId}')"><i class="fa-solid fa-language" style="color:var(--accent-gold);"></i> 🤖 AI ဖြင့် မြန်မာဘာသာသို့ ပြန်ဆိုမည်</div>
                 <div class="drawer-menu-item" onclick="reportPost('${postId}')"><i class="fa-solid fa-flag" style="color:var(--accent-pink);"></i> စည်းကမ်းဖောက်ဖျက်မှု တိုင်ကြားမည်</div>
             `;
-            if(isAdminMode || postId === 'post-p1') {
+            if(isAdminMode) {
                 menuHtml += `<div class="drawer-menu-item" style="color:var(--danger);" onclick="deletePost('${postId}')"><i class="fa-solid fa-trash"></i> 🗑️ ပို့စ်အား ထာဝရဖျက်ဆီးရန် (Admin)</div>`;
             }
             document.getElementById('drawerMenuContent').innerHTML = menuHtml;
@@ -318,11 +328,11 @@
             document.getElementById('tiktokDrawer').classList.remove('open');
         }
 
-        function triggerAiTranslation() {
+        function triggerAiTranslation(postId) {
             closeTikTokDrawer();
             alert("AI က နောက်ကွယ်မှ စာသားကို စစ်ဆေးနေပါပြီဗျာ...");
             setTimeout(() => {
-                let targetPara = document.getElementById('text-post-p1');
+                let targetPara = document.getElementById('text-' + postId);
                 if(targetPara) {
                     targetPara.innerHTML = `<span style="color:var(--accent-green);">[AI ပြန်ဆိုချက်]</span> မင်္ဂလာပါ Happy Platform မှ ကြိုဆိုပါတယ်! သင်အလိုရှိပါက AI ဘာသာပြန်စနစ်ကို အသုံးပြုနိုင်ပါသည်။ ဤနေရာသည် ကမ္ဘာတစ်ဝှမ်းရှိ မြန်မာလူမျိုးများ မိမိတို့၏ ခံစားချက်များကို လွတ်လပ်လုံခြုံစွာ မျှဝေရာ နေရာဖြစ်ပါသည်။`;
                     alert("Google Gemini API မွမ်းမံမှုစနစ်ဖြင့် အင်္ဂလိပ်စာသားကို မြန်မာလို အောင်မြင်စွာ ဘာသာပြန်ဆို စာတန်းထိုးပေးပြီးပါပြီဗျာ! 🚀");
@@ -330,10 +340,19 @@
             }, 800);
         }
 
+        function extractYouTubeId(url) {
+            if(!url) return '';
+            let reg = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
+            let m = url.match(reg); return (m && m[2].length === 11) ? m[2] : url;
+        }
+
         function handleSecurePublish() {
             if(!currentUser) return alert("ပို့စ်မျှဝေရန်အတွက် အရင်ဆုံး အထက်တွင် အကောင့်တစ်ခု ဖွင့်လှစ်/ဝင်ရောက်ပေးပါဗျာ။");
             let title = document.getElementById('inputTitle').value || 'အမည်မသိ ခံစားချက်ရှင်';
-            let desc = document.getElementById('inputDesc').value; let video = document.getElementById('inputVideo').value;
+            let desc = document.getElementById('inputDesc').value; 
+            let videoUrl = document.getElementById('inputVideo').value;
+            let musicUrl = document.getElementById('inputMusic').value;
+            
             if(!desc) return alert("မျှဝေလိုသော စာသားကို ရေးပေးပါဦးဗျာ။");
 
             let isViolated = false;
@@ -341,22 +360,28 @@
             if(isViolated) { alert("စည်းကမ်းချက်နှင့် ငြိစွန်းမှုကြောင့် ဤပို့စ်ကို စနစ်မှ လျှို့ဝှက် ထိန်းချုပ်လိုက်ပါသည်။"); return; }
 
             let container = document.getElementById('feedContainer'); let pId = 'post-' + Date.now();
-            let videoId = '';
-            if(video) {
-                let reg = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
-                let m = video.match(reg); videoId = (m && m[2].length === 11) ? m[2] : video;
-            }
+            let videoId = extractYouTubeId(videoUrl);
+            let musicId = extractYouTubeId(musicUrl);
 
             let themeClass = selectedTheme !== 'normal' ? 'theme-' + selectedTheme : '';
-            let musicPlayerHtml = videoId ? `
+            
+            // 🎥 VIDEO THUMBNAIL LAYOUT
+            let videoThumbnailHtml = videoId ? `
+                <div class="card-thumbnail" onclick="playMedia('${videoId}', '${title}')">
+                    <div class="play-overlay"><i class="fa-solid fa-circle-play"></i> 🎥 ဗီဒီယိုဖွင့်ကြည့်မည်</div>
+                </div>` : '';
+
+            // 🎵 MINI MUSIC PLAYER LAYOUT
+            let musicPlayerHtml = musicId ? `
                 <div class="mini-audio-container">
                     <i class="fa-solid fa-music music-wave-icon"></i>
-                    <span style="font-size:0.85rem; color:#cbd5e1; flex:1;">ရွေးချယ်ထားသော နောက်ခံတီးလုံး</span>
-                    <button class="btn-auth-trigger" style="padding:4px 10px; font-size:0.75rem;" onclick="playMedia('${videoId}', '${title}')">နားထောင်မည်</button>
+                    <span style="font-size:0.85rem; color:#cbd5e1; flex:1;">တွဲဖက်ထားသော နောက်ခံတီးလုံး</span>
+                    <button class="btn-auth-trigger" style="padding:4px 10px; font-size:0.75rem;" onclick="playMedia('${musicId}', 'Background Music')">နားထောင်မည်</button>
                 </div>` : '';
 
             let html = `
             <div class="media-card ${themeClass}" id="${pId}">
+                ${videoThumbnailHtml}
                 <div class="card-body">
                     <div class="card-meta">
                         <span>👤 ${currentUser}</span>
@@ -372,8 +397,9 @@
             </div>`;
             
             container.innerHTML = html + container.innerHTML;
-            alert("ပို့စ်အား စည်းကမ်းချက်များနှင့်အညီ ကာလာလှလှလေးဖြင့် အောင်မြင်စွာ မျှဝေပြီးပါပြီဗျာ!");
-            document.getElementById('inputTitle').value = ""; document.getElementById('inputDesc').value = ""; document.getElementById('inputVideo').value = "";
+            alert("ပို့စ်အား စည်းကမ်းချက်များနှင့်အညီ ဗီဒီယို/သီချင်း ကဏ္ဍစုံလင်စွာဖြင့် မျှဝေပြီးပါပြီဗျာ!");
+            document.getElementById('inputTitle').value = ""; document.getElementById('inputDesc').value = ""; 
+            document.getElementById('inputVideo').value = ""; document.getElementById('inputMusic').value = "";
         }
 
         function playMedia(id, title) {
@@ -401,4 +427,4 @@
         }
     </script>
 </body>
-                          </html>
+                        </html>
