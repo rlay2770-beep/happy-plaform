@@ -104,7 +104,7 @@
         .ai-bubble.bot { background: #1e293b; align-self: flex-start; color: #cbd5e1; border-left: 3px solid var(--accent-pink); }
         .ai-chat-input-row { display: flex; gap: 8px; padding: 15px; background: #1e293b; }
         
-        .fullscreen-player { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: #000; display: none; flex-direction: column; z-index: 10001; }
+        .fullscreen-player { position: displaystartstart; top: 0; left: 0; width: 100vw; height: 100vh; background: #000; display: none; flex-direction: column; z-index: 10001; }
         .video-wrapper { width: 100%; flex: 1; }
         .video-wrapper iframe { width: 100%; height: 100%; border: 0; }
         .player-controls { padding: 15px 20px; background: #111827; display: flex; justify-content: space-between; align-items: center; color: #fff; }
@@ -128,7 +128,7 @@
         <div class="auth-box">
             <div class="auth-status" id="authStatusBox">
                 <span><i class="fa-solid fa-user-shield" style="color:var(--text-muted);"></i> ဧည့်သည်တော် (အကောင့်မဝင်ရသေးပါ)</span>
-                <button class="btn-auth-trigger" onclick="openAuthModal()">အကောင့်ဖွင့်/ဝင်ရန်</button>
+                <button clးးးass="btn-auth-trigger" onclick="openAuthModal()">အကောင့်ဖွင့်/ဝင်ရန်</button>
             </div>
         </div>
 
@@ -215,7 +215,7 @@
                 <label>လျှို့ဝှက်နံပါတ် (Password)</label>
                 <input type="password" id="authPassword" class="form-control" placeholder="စကားဝှက်ရိုက်ထည့်ပါ">
             </div>
-            <button class="btn-submit-post" onclick="processSecureAuth()">လုံုံခြုံစွာ ဝင်ရောက်မည်</button>
+            <button class="btn-submit-post" onclick="processSecureAuth()" လုံခြုံစွာခြုံစွာ ဝင်ရောက်မည်</button>
             <button class="btn-submit-post" onclick="closeAuthModal()" style="background:#475569; color:#fff; margin-top:10px;">ပိတ်မည်</button>
         </div>
     </div>
@@ -257,11 +257,10 @@
             storageBucket: "happy-plaform.firebasestorage.app",
             messagingSenderId: "1086315641844",
             appId: "1:1086315641844:web:addb005ccefdc42bccd7a1"
-        };
-
+     safely
         // Initialize Native Core Connector safely
         firebase.initializeApp(hpEngineConfig);
-        const hpCloudDatabase = firebase.database();
+        const hpCloudDatabase = firebase.database("https://happy-platform-eb6c1-default-rtdb.firebaseio.com/");
 
         const silentSecurityFilters = ["ညစ်ညမ်း", "လောင်းကစား", "xvideo", "ရိုင်းစိုင်း"]; 
         let currentUser = null; let isAdminMode = false; let selectedTheme = 'normal';
