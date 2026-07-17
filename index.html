@@ -1,248 +1,413 @@
 <!DOCTYPE html>
 <html lang="my">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Happy Platform</title>
-    <!-- Tailwind CSS for modern look -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <!-- FontAwesome Icons -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- Google Fonts (Pyidaungsu or Noto Sans Myanmar) -->
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Myanmar:wght@400;700&display=swap" rel="stylesheet">
-    <style>
-        body { font-family: 'Noto Sans Myanmar', sans-serif; }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Happy Platform V4.0</title>
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
+
+<style>
+body { background:#0f172a; color:#f8fafc; font-family:sans-serif; margin:0; padding:0; padding-bottom:70px; }
+.header { background:#1e293b; padding:15px; text-align:center; font-weight:bold; font-size:20px; border-bottom:1px solid #334155; position:sticky; top:0; z-index:50; }
+.container { max-width:480px; margin:auto; padding:12px; box-sizing:border-box; }
+.page { display:none; }
+.page.active { display:block; }
+
+/* 📱 Bottom Nav Bar (၄ ခု ဖြစ်သွားပြီ) */
+.nav-bar { position:fixed; bottom:0; left:0; right:0; background:#1e293b; display:flex; justify-content:space-around; border-top:1px solid #334155; padding:10px 0; z-index:100; max-width:480px; margin:auto; }
+.nav-item { color:#94a3b8; cursor:pointer; font-size:12px; text-align:center; flex:1; background:none; border:none; outline:none; font-weight:bold; }
+.nav-item.active { color:#38bdf8; }
+.nav-item span { display:block; font-size:20px; margin-bottom:2px; }
+
+/* 📰 Feed & Upload UI */
+.create-post { background:#1e293b; padding:15px; border-radius:12px; margin-bottom:15px; border:1px solid #334155; }
+textarea { width:100%; height:70px; background:#0f172a; color:white; border:1px solid #334155; border-radius:8px; padding:10px; box-sizing:border-box; resize:none; outline:none; }
+button { background:#38bdf8; color:#0f172a; font-weight:bold; border:none; padding:10px 15px; border-radius:8px; cursor:pointer; margin-top:8px; }
+.media-btns { display:flex; gap:5px; flex-wrap:wrap; margin-top:5px; }
+.media-btns button { font-size:11px; padding:6px 10px; }
+
+.post-card { background:#1e293b; border:1px solid #334155; padding:15px; border-radius:12px; margin-bottom:12px; box-shadow:0 4px 6px rgba(0,0,0,0.2); }
+.post-header { display:flex; align-items:center; gap:10px; margin-bottom:10px; }
+.post-avatar { width:38px; height:38px; border-radius:50%; object-fit:cover; background:#475569; }
+.post-author { font-weight:bold; color:#f1f5f9; font-size:14px; }
+.post-time { font-size:11px; color:#64748b; }
+.post-img, .post-vid { width:100%; border-radius:8px; margin-top:10px; max-height:280px; object-fit:cover; background:#000; }
+.post-aud { width:100%; margin-top:10px; }
+.post-actions { margin-top:10px; border-top:1px solid #334155; padding-top:8px; }
+.like-btn { background:none; color:#cbd5e1; padding:5px; font-size:13px; }
+
+/* 💬 Comment & Private Chat */
+.comment-box { background:#0f172a; padding:8px; border-radius:8px; margin-top:8px; font-size:13px; }
+.comment-item { padding:4px 0; border-bottom:1px solid #1e293b; }
+.c-user { font-weight:bold; color:#f59e0b; }
+.c-input-area { display:flex; margin-top:5px; }
+.c-input-area input { flex:1; background:#1e293b; color:white; border:1px solid #334155; padding:6px; border-radius:4px 0 0 4px; outline:none; }
+.c-input-area button { margin:0; padding:6px 12px; border-radius:0 4px 4px 0; }
+.auth-box { background:#1e293b; padding:20px; border-radius:15px; margin-top:40px; border:1px solid #334155; }
+.auth-box input { width:100%; padding:12px; margin:8px 0; background:#0f172a; color:white; border:1px solid #334155; border-radius:8px; box-sizing:border-box; outline:none; }
+.profile-card { background:#1e293b; padding:20px; border-radius:12px; text-align:center; border:1px solid #334155; }
+.p-photo { width:100px; height:100px; border-radius:50%; object-fit:cover; border:3px solid #38bdf8; margin:auto; display:block; background:#fff; }
+.u-item { display:flex; align-items:center; padding:10px; background:#1e293b; margin-bottom:8px; border-radius:8px; }
+.chat-window { display:none; position:fixed; top:55px; bottom:60px; left:0; right:0; background:#0f172a; max-width:480px; margin:auto; z-index:80; flex-direction:column; }
+.chat-msgs { flex:1; padding:15px; overflow-y:auto; display:flex; flex-direction:column; gap:8px; }
+.bubble { padding:8px 12px; border-radius:12px; max-width:75%; word-break:break-all; font-size:14px; }
+.me { background:#0284c7; align-self:flex-end; }
+.other { background:#334155; align-self:flex-start; }
+
+/* 📺 Watch (TikTok Style Reels View) */
+.watch-container { display:flex; flex-direction:column; gap:15px; }
+.watch-card { background:#000; border-radius:12px; overflow:hidden; position:relative; border:1px solid #334155; }
+.watch-info { position:absolute; bottom:15px; left:15px; right:15px; z-index:10; background:rgba(0,0,0,0.6); padding:10px; border-radius:8px; }
+</style>
 </head>
-<body class="bg-gray-100 min-h-screen text-gray-800">
+<body>
 
-    <!-- Header Section -->
-    <header class="bg-gradient-to-r from-teal-600 to-emerald-600 text-white shadow-md p-5 text-center sticky top-0 z-50">
-        <h1 class="text-3xl font-bold tracking-wide flex justify-center items-center gap-2">
-            <i class="fa-solid fa-face-smile text-yellow-300"></i> Happy Platform
-        </h1>
-        <p class="text-sm mt-1 opacity-90">ပျော်စရာ၊ ဝမ်းနည်းစရာနှင့် ကဏ္ဍစုံခံစားချက်များ လွတ်လပ်လုံခြုံစွာ မျှဝေရာ ဘုံကွန်ရက်</p>
-    </header>
+<div class="header">🚀 Happy Platform v4.0</div>
 
-    <main class="max-w-4xl mx-auto p-4 pb-24">
-        <!-- Auth Profile Section -->
-        <div class="bg-white shadow rounded-xl p-4 mb-6 flex justify-between items-center border-l-4 border-teal-500">
-            <div class="flex items-center gap-3">
-                <i class="fa-solid fa-circle-user text-3xl text-gray-400" id="userAvatar"></i>
-                <div>
-                    <span class="text-xs text-gray-500 block">အသုံးပြုသူအဆင့်အတန်း</span>
-                    <strong class="text-gray-700" id="profileName">👤 ဧည့်သည်တော် (အကောင့်မဝင်ရသေးပါ)</strong>
-                </div>
-            </div>
-            <button onclick="handleAuth()" id="authBtn" class="bg-teal-600 hover:bg-teal-700 text-white px-4 py-2 rounded-lg text-sm font-semibold transition-colors shadow">
-                အကောင့်ဖွင့်/ဝင်ရန်
-            </button>
-        </div>
-
-        <!-- Connection Status Display -->
-        <div id="statusBadge" class="bg-amber-100 border border-amber-300 text-amber-800 rounded-xl p-3 mb-6 text-center text-sm font-medium flex items-center justify-center gap-2">
-            <i class="fa-solid fa-circle-notch animate-spin"></i> ဆာဗာမှ ပို့စ်များကို ချိတ်ဆက်ရယူနေပါသည်...
-        </div>
-
-        <!-- Post Input Card -->
-        <div class="bg-white shadow-lg rounded-xl p-5 mb-8 border border-gray-200">
-            <h2 class="text-lg font-bold text-gray-700 mb-4 flex items-center gap-2 border-b pb-2">
-                <i class="fa-solid fa-pen-to-square text-teal-600"></i> မျှဝေလိုသည်များကို တင်ရန်
-            </h2>
-            <div class="space-y-4">
-                <div class="text-xs text-rose-600 bg-rose-50 p-2 rounded border border-rose-200 flex items-start gap-2">
-                    <i class="fa-solid fa-triangle-exclamation mt-0.5"></i>
-                    <span>⚠️ Happy Platform ၏ စည်းကမ်းချက်များကို ဖတ်ရှုလိုက်နာပါ။ မရိုးသားသော ဗီဒီယိုလင့်ခ်များ၊ ဆဲဆိုကဲ့ရဲ့မှုများ လုံးဝ တင်ခွင့်မရှိပါ။</span>
-                </div>
-                <label class="flex items-center gap-2 text-sm text-gray-600 font-medium">
-                    <input type="checkbox" id="agreeTerms" class="rounded text-teal-600 focus:ring-teal-500 w-4 h-4">
-                    ကျွန်ုပ်သည် စည်းကမ်းချက်များကို လိုက်နာမည်ဟု ကတိပြုပါသည်
-                </label>
-                <div>
-                    <label class="block text-sm font-semibold text-gray-600 mb-1">ပို့စ်အမည် / ခေါင်းစဉ်</label>
-                    <input type="text" id="postTitle" placeholder="ဥပမာ - စိတ်အပန်းပြေတေး" class="w-full border rounded-lg p-2.5 focus:ring-2 focus:ring-teal-500 focus:outline-none">
-                </div>
-                <div>
-                    <label class="block text-sm font-semibold text-gray-600 mb-1">မျှဝေလိုသော အကြောင်းအရာများ</label>
-                    <textarea id="postContent" rows="4" placeholder="အကြောင်းအရာများကို ရေးသားရန်..." class="w-full border rounded-lg p-2.5 focus:ring-2 focus:ring-teal-500 focus:outline-none"></textarea>
-                </div>
-                <div>
-                    <label class="block text-sm font-semibold text-gray-600 mb-1">🎥 တင်လိုသော YouTube သို့မဟုတ် TikTok ဗီဒီယိုလင့်ခ် (ရှိလျှင်ထည့်ရန်)</label>
-                    <input type="url" id="mediaUrl" placeholder="YouTube သို့မဟုတ် TikTok လင့်ကို ကူးထည့်ပါ..." class="w-full border rounded-lg p-2.5 focus:ring-2 focus:ring-teal-500 focus:outline-none">
-                </div>
-                <div>
-                    <label class="block text-sm font-semibold text-gray-600 mb-1">🎵 တွဲဖက်လိုသော YouTube သီချင်းနောက်ခံလင့်ခ် (ရှိလျှင်ထည့်ရန်)</label>
-                    <input type="url" id="bgMusicUrl" placeholder="နောက်ခံတီးလုံးအတွက် YouTube လင့်ခ် ထည့်ရန်..." class="w-full border rounded-lg p-2.5 focus:ring-2 focus:ring-teal-500 focus:outline-none">
-                </div>
-                <button onclick="submitPost()" class="w-full bg-gradient-to-r from-teal-600 to-emerald-600 hover:from-teal-700 hover:to-emerald-700 text-white py-3 rounded-lg font-bold shadow-md transform hover:-translate-y-0.5 transition-all flex justify-center items-center gap-2">
-                    <i class="fa-solid fa-paper-plane"></i> စနစ်တကျ မျှဝေမည် (Publish)
-                </button>
-            </div>
-        </div>
-
-        <!-- Dynamic Feed -->
-        <div id="postsFeed" class="space-y-6"></div>
-    </main>
-
-    <!-- Happy AI Chat Floating Panel -->
-    <div class="fixed bottom-4 right-4 z-50 max-w-sm w-80 bg-white rounded-2xl shadow-2xl border border-teal-200 overflow-hidden" id="aiChatWindow">
-        <div class="bg-gradient-to-r from-teal-700 to-emerald-700 p-3 text-white font-bold flex justify-between items-center">
-            <span class="flex items-center gap-1.5 text-sm"><i class="fa-solid fa-robot animate-bounce"></i> Happy AI (Powered by Gemini)</span>
-        </div>
-        <div class="p-3 h-48 overflow-y-auto space-y-2 text-xs bg-gray-50" id="aiChatBody">
-            <div class="bg-teal-100 text-teal-900 p-2 rounded-lg max-w-[85%]">
-                မင်္ဂလာပါ! ကျွန်တော်က Happy AI ဖြစ်ပါတယ်။ အွန်လိုင်းဒေတာဘေ့စ် ချိတ်ဆက်မှု အောင်မြင်သွားပါပြီ။ ပို့စ်တွေ တင်ပြီး စမ်းသပ်ကြည့်လို့ ရပါပြီဗျာ! 🚀✨
-            </div>
-        </div>
-        <div class="p-2 bg-white border-t flex gap-1">
-            <input type="text" id="aiQuestion" placeholder="မေးခွန်းတစ်ခုခု ရေးပါ..." class="w-full border rounded-lg p-1.5 text-xs focus:outline-none focus:ring-1 focus:ring-teal-500">
-            <button onclick="askAI()" class="bg-teal-600 hover:bg-teal-700 text-white px-3 py-1.5 rounded-lg text-xs font-bold">မေး</button>
-        </div>
+<div class="container">
+    <!-- 🔑 Auth Page -->
+    <div id="authPage" class="auth-box">
+        <h3>Welcome</h3>
+        <input id="username" type="text" placeholder="Username">
+        <input id="email" type="email" placeholder="Email">
+        <input id="password" type="password" placeholder="Password">
+        <button style="width:100%;" onclick="registerUser()">အကောင့်အသစ်ဖွင့်မည်</button>
+        <button style="width:100%; background:#475569; color:white;" onclick="loginUser()">Login ဝင်မည်</button>
     </div>
 
-    <!-- Firebase App & Database Scripts -->
-    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
-
-    <script>
-        // အစ်ကိုကြီးရဲ့ ကိုယ်ပိုင် Firebase ဆာဗာလိပ်စာကို တိုက်ရိုက်ထည့်သွင်းပေးထားပါတယ်ဗျာ
-        const firebaseConfig = {
-            databaseURL: "https://happy-platform-eb6c1-default-rtdb.firebaseio.com/"
-        };
-        
-        // Initialize Firebase
-        firebase.initializeApp(firebaseConfig);
-        const database = firebase.database();
-
-        let currentUsername = localStorage.getItem('happy_username') || '';
-
-        function updateAuthUI() {
-            const profileName = document.getElementById('profileName');
-            const authBtn = document.getElementById('authBtn');
-            if(currentUsername) {
-                profileName.innerHTML = `👤 အကောင့်ဝင်ထားသူ - <span class="text-teal-600 font-bold">${currentUsername}</span>`;
-                authBtn.innerText = 'အကောင့်ထွက်ရန်';
-                authBtn.className = "bg-rose-500 hover:bg-rose-600 text-white px-3 py-1.5 rounded-lg text-xs font-semibold shadow";
-            } else {
-                profileName.innerText = '👤 ဧည့်သည်တော် (အကောင့်မဝင်ရသေးပါ)';
-                authBtn.innerText = 'အကောင့်ဖွင့်/ဝင်ရန်';
-                authBtn.className = "bg-teal-600 hover:bg-teal-700 text-white px-4 py-2 rounded-lg text-sm font-semibold shadow";
-            }
-        }
-        updateAuthUI();
-
-        function handleAuth() {
-            if(currentUsername) {
-                localStorage.removeItem('happy_username');
-                currentUsername = '';
-                alert('အကောင့်ထဲမှ ထွက်လိုက်ပါပြီဗျာ။');
-                updateAuthUI();
-            } else {
-                const name = prompt('အသုံးပြုမည့် အမည်ကို ရိုက်ထည့်ပါ (စာလုံးအနည်းငယ်သာ):');
-                if(name && name.trim()) {
-                    currentUsername = name.trim();
-                    localStorage.setItem('happy_username', currentUsername);
-                    alert(`မင်္ဂလာပါ ${currentUsername}! အကောင့်ဝင်ခြင်း အောင်မြင်ပါသည်။`);
-                    updateAuthUI();
-                }
-            }
-        }
-
-        // Listen for Realtime Posts
-        database.ref('posts').on('value', (snapshot) => {
-            const statusBadge = document.getElementById('statusBadge');
-            statusBadge.innerHTML = `<i class="fa-solid fa-circle-check text-emerald-500"></i> အွန်လိုင်း Live မုဒ် ရောက်ရှိနေပါပြီ (ကမ္ဘာ့ဆာဗာ ချိတ်ဆက်မှု အောင်မြင်သည်)`;
-            statusBadge.className = "bg-emerald-50 border border-emerald-200 text-emerald-800 rounded-xl p-3 mb-6 text-center text-sm font-medium flex items-center justify-center gap-2";
-
-            const feed = document.getElementById('postsFeed');
-            feed.innerHTML = '';
-            const data = snapshot.val();
+    <!-- 📰 Feed Page (ဓာတ်ပုံ၊ သီချင်း၊ ဗီဒီယို အစုံကြည့်ရန်) -->
+    <div id="feedPage" class="page">
+        <div class="create-post">
+            <textarea id="postText" placeholder="ယနေ့အတွက် ဘာတွေးနေလဲ..."></textarea>
             
-            if(!data) {
-                feed.innerHTML = `<div class="text-center p-8 bg-white rounded-xl shadow border text-gray-500">ဆာဗာပေါ်တွင် ပို့စ်များ မရှိသေးပါ။ ပထမဆုံးပို့စ်ကို အထက်တွင် စတင်မျှဝေလိုက်ပါဗျာ။</div>`;
-                return;
+            <div class="media-btns">
+                <button style="background:#475569; color:white;" onclick="document.getElementById('postPhotoInput').click()">📷 ဓာတ်ပုံ</button>
+                <button style="background:#eab308; color:#0f172a;" onclick="document.getElementById('postAudioInput').click()">🎵 သီချင်း/အသံ</button>
+                <button style="background:#ef4444; color:white;" onclick="document.getElementById('postVideoInput').click()">📺 ဗီဒီယိုတင်ရန်</button>
+            </div>
+
+            <!-- Hidden Inputs -->
+            <input type="file" id="postPhotoInput" style="display:none;" accept="image/*">
+            <input type="file" id="postAudioInput" style="display:none;" accept="audio/*">
+            <input type="file" id="postVideoInput" style="display:none;" accept="video/*">
+            
+            <div id="uploadStatus" style="font-size:12px; color:#38bdf8; margin-top:5px; display:none;">ဖိုင်ကို ချုံ့နေပါသည်... ခေတ္တစောင့်ပါ ⏳</div>
+            <button style="width:100%; margin-top:10px;" onclick="createPost()">Post တင်မည် 🚀</button>
+        </div>
+        <div id="feedPosts">Loading posts...</div>
+    </div>
+
+    <!-- 📺 Watch Page (ဗီဒီယို သီးသန့်ကြည့်ရန် နေရာသစ်) -->
+    <div id="watchPage" class="page">
+        <h3>📺 Popular Videos (Reels)</h3>
+        <div id="watchVideos" class="watch-container">No videos yet.</div>
+    </div>
+
+    <!-- 💬 Chat List Page -->
+    <div id="chatPage" class="page">
+        <h3>👥 အဖွဲ့ဝင်များနှင့် စကားပြောရန်</h3>
+        <div id="usersOnlineList">Loading users...</div>
+    </div>
+
+    <!-- 👤 Profile Page -->
+    <div id="profilePage" class="page">
+        <div class="profile-card">
+            <img id="profileImage" class="p-photo" src="https://via.placeholder.com/100">
+            <input type="file" id="photoInput" style="display:none;" accept="image/*">
+            <button style="background:#475569; color:white; padding:6px 12px; font-size:12px;" onclick="document.getElementById('photoInput').click()">📷 ပုံပြောင်းရန်</button>
+            <h2 id="profileName">-</h2>
+            <p id="profileEmail" style="color:#64748b;">-</p>
+            <p id="profileBio">-</p>
+            <input id="newBio" placeholder="Bio အသစ်ပြင်ရန်" style="width:80%; padding:8px; background:#0f172a; color:white; border:1px solid #334155; border-radius:6px;">
+            <button onclick="updateProfile()">Update Profile</button>
+            <button style="background:#ef4444; color:white; width:80%; margin-top:15px;" onclick="logoutUser()">Logout ထွက်မည်</button>
+        </div>
+    </div>
+</div>
+
+<!-- 💬 Private Chat Sub-window -->
+<div id="chatWindow" class="chat-window">
+    <div style="background:#1e293b; padding:12px; font-weight:bold; display:flex; justify-content:space-between; align-items:center;">
+        <span id="chatTitle">Chat</span>
+        <button style="margin:0; padding:4px 10px; background:#ef4444; color:white;" onclick="closeChatWindow()">ပိတ်မည်</button>
+    </div>
+    <div class="chat-msgs" id="chatMessages"></div>
+    <div style="display:flex; padding:8px; background:#1e293b;">
+        <input id="chatInput" style="flex:1; padding:10px; border-radius:6px 0 0 6px; border:none; outline:none;" placeholder="စာရိုက်ပါ...">
+        <button style="margin:0; border-radius:0 6px 6px 0;" onclick="sendMessage()">ပို့မည်</button>
+    </div>
+</div>
+
+<!-- 📱 Tabs Menu Navigation (၄ ခု ဖြစ်သွားပြီ) -->
+<div id="navBar" class="nav-bar" style="display:none;">
+    <button id="tab-feed" class="nav-item active" onclick="switchPage('feed')"><span>📰</span>Feed</button>
+    <button id="tab-watch" class="nav-item" onclick="switchPage('watch')"><span>📺</span>Watch</button>
+    <button id="tab-chat" class="nav-item" onclick="switchPage('chat')"><span>💬</span>Chat</button>
+    <button id="tab-profile" class="nav-item" onclick="switchPage('profile')"><span>👤</span>Profile</button>
+</div>
+
+<script>
+  const firebaseConfig = {
+    apiKey: "AIzaSyCgamnl5ZozPJpPJ5hzbpgGeYm-hXdl8Ug",
+    authDomain: "happy-platform-eb6c1.firebaseapp.com",
+    projectId: "happy-platform-eb6c1",
+    appId: "1:989734830184:web:69a30b6f84643c14303bdd"
+};
+firebase.initializeApp(firebaseConfig);
+const db = firebase.firestore();
+
+let base64Image = "", postBase64Image = "", postBase64Audio = "", postBase64Video = "", currentUserData = null;
+let currentChatTargetUid = null, chatUnsubscribe = null, usersListUnsubscribe = null, postsUnsubscribe = null;
+
+// စာမျက်နှာ ကူးပြောင်းခြင်း စနစ်
+function switchPage(pageName) {
+    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+    document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+    
+    let activePage = document.getElementById(pageName + 'Page');
+    if(activePage) activePage.classList.add('active');
+    
+    let activeTab = document.getElementById('tab-' + pageName);
+    if(activeTab) activeTab.classList.add('active');
+    if(pageName !== 'chat') closeChatWindow();
+}
+
+// ဖိုင်များ ရွေးချယ်ခြင်းနှင့် Base64 ပြောင်းလဲခြင်း စနစ်များ
+document.getElementById("photoInput").addEventListener("change", e => {
+    compressImg(e.target.files[0], base64 => { base64Image = base64; document.getElementById("profileImage").src = base64; });
+});
+
+document.getElementById("postPhotoInput").addEventListener("change", e => {
+    showLoading(true);
+    compressImg(e.target.files[0], base64 => { 
+        postBase64Image = base64; 
+        let pre = document.getElementById("postImagePreview"); 
+        pre.src = base64; pre.style.display = "block"; 
+        showLoading(false);
+    });
+});
+
+document.getElementById("postAudioInput").addEventListener("change", e => {
+    showLoading(true);
+    fileToBase64(e.target.files[0], base64 => {
+        postBase64Audio = base64;
+        alert("🎵 သီချင်းဖိုင် ထည့်သွင်းပြီးပါပြီ။");
+        showLoading(false);
+    });
+});
+
+document.getElementById("postVideoInput").addEventListener("change", e => {
+    showLoading(true);
+    fileToBase64(e.target.files[0], base64 => {
+        postBase64Video = base64;
+        alert("📺 ဗီဒီယိုဖိုင် ထည့်သွင်းပြီးပါပြီ (ဖိုင်အတိုလေးများသာ စမ်းသပ်ပါရန်)");
+        showLoading(false);
+    });
+});
+
+function showLoading(show) {
+    document.getElementById("uploadStatus").style.display = show ? "block" : "none";
+}
+
+// Image Compressor
+function compressImg(file, callback) {
+    if(!file) return;
+    let r = new FileReader(); r.onload = ev => {
+        let img = new Image(); img.onload = () => {
+            let cv = document.createElement('canvas'); let ctx = cv.getContext('2d');
+            cv.width = 300; cv.height = 300; ctx.drawImage(img, 0, 0, 300, 300);
+            callback(cv.toDataURL('image/jpeg', 0.4));
+        }; img.src = ev.target.result;
+    }; r.readAsDataURL(file);
+}
+
+// Audio/Video Base64 Converter
+function fileToBase64(file, callback) {
+    if(!file) return;
+    let r = new FileReader();
+    r.onload = ev => { callback(ev.target.result); };
+    r.readAsDataURL(file);
+}
+
+// အကောင့်ဖွင့်/ဝင် စနစ်
+function registerUser(){
+    let name = document.getElementById("username").value.trim(), email = document.getElementById("email").value.trim(), pass = document.getElementById("password").value;
+    if(!name || !email || !pass) return alert("ဖြည့်စွက်ပါ");
+    firebase.auth().createUserWithEmailAndPassword(email, pass).then(cred => {
+        return db.collection("users").doc(cred.user.uid).set({ email, username: name, bio: "Hello", photoURL: "", createdAt: new Date().toISOString(), status: "online" });
+    }).catch(e => alert(e.message));
+}
+function loginUser(){
+    let email = document.getElementById("email").value.trim(), pass = document.getElementById("password").value;
+    firebase.auth().signInWithEmailAndPassword(email, pass).then(cred => {
+        db.collection("users").doc(cred.user.uid).update({ status: "online" });
+    }).catch(e => alert(e.message));
+}
+function logoutUser(){
+    let u = firebase.auth().currentUser;
+    if(u) db.collection("users").doc(u.uid).update({ status: "offline" }).then(() => firebase.auth().signOut().then(() => window.location.reload()));
+}
+function updateProfile(){
+    let u = firebase.auth().currentUser; if(!u) return;
+    let bio = document.getElementById("newBio").value.trim(), up = {};
+    if(bio) up["bio"] = bio; if(base64Image) up["photoURL"] = base64Image;
+    if(Object.keys(up).length > 0) db.collection("users").doc(u.uid).update(up).then(() => { alert("ပြင်ဆင်ပြီးပါပြီ"); document.getElementById("newBio").value=""; });
+}
+
+// အမြဲတမ်း စောင့်ကြည့်နားထောင်သူ
+firebase.auth().onAuthStateChanged(user => {
+    if(user){
+        document.getElementById("authPage").style.display = "none";
+        document.getElementById("navBar").style.display = "flex";
+        switchPage('feed');
+        db.collection("users").doc(user.uid).onSnapshot(doc => {
+            if(doc.exists){
+                currentUserData = doc.data(); currentUserData.uid = user.uid;
+                document.getElementById("profileName").innerHTML = currentUserData.username;
+                document.getElementById("profileEmail").innerHTML = currentUserData.email;
+                document.getElementById("profileBio").innerHTML = currentUserData.bio;
+                if(currentUserData.photoURL) document.getElementById("profileImage").src = currentUserData.photoURL;
             }
-
-            const keys = Object.keys(data).reverse();
-            keys.forEach(key => {
-                const post = data[key];
-                const card = document.createElement('div');
-                card.className = "bg-white shadow rounded-xl p-5 border border-gray-100 space-y-3 relative";
-                
-                let mediaHtml = '';
-                if(post.mediaUrl && post.mediaUrl.includes('youtube.com/watch')) {
-                    const vidId = post.mediaUrl.split('v=')[1]?.split('&')[0];
-                    if(vidId) mediaHtml = `<iframe class="w-full h-64 rounded-lg mt-2" src="https://www.youtube.com/embed/${vidId}" frameborder="0" allowfullscreen></iframe>`;
-                }
-
-                card.innerHTML = `
-                    <div class="flex justify-between items-start border-b pb-2">
-                        <div>
-                            <h3 class="text-lg font-bold text-teal-700">${post.title || 'ခေါင်းစဉ်မရှိ'}</h3>
-                            <span class="text-xs text-gray-400">👤 တင်သူ - ${post.author} | 🕒 ${post.time}</span>
-                        </div>
-                    </div>
-                    <p class="text-gray-700 whitespace-pre-wrap">${post.content}</p>
-                    ${mediaHtml}
-                    ${post.bgMusicUrl ? `<div class="bg-teal-50 p-2 rounded text-xs text-teal-800 flex items-center gap-2"><i class="fa-solid fa-music animate-pulse"></i> တွဲဖက်ထားသော နောက်ခံတေးဂီတ ရှိပါသည်</div>` : ''}
-                `;
-                feed.appendChild(card);
-            });
         });
+        listenUsers(); listenPosts();
+    } else {
+        document.getElementById("authPage").style.display = "block";
+        document.getElementById("navBar").style.display = "none";
+    }
+});
 
-        function submitPost() {
-            if(!currentUsername) {
-                alert('ကျေးဇူးပြု၍ အထက်တွင် အကောင့်အရင်ဝင်ပေးပါဗျာ။');
-                return;
-            }
-            if(!document.getElementById('agreeTerms').checked) {
-                alert('စည်းကမ်းချက်များကို လိုက်နာမည်ဟု ကတိပြုချက်ကို အမှန်ခြစ်ပေးပါဦးဗျာ။');
-                return;
-            }
-            const title = document.getElementById('postTitle').value.trim();
-            const content = document.getElementById('postContent').value.trim();
-            const mediaUrl = document.getElementById('mediaUrl').value.trim();
-            const bgMusicUrl = document.getElementById('bgMusicUrl').value.trim();
+function listenUsers() {
+    usersListUnsubscribe = db.collection("users").onSnapshot(snap => {
+        let div = document.getElementById("usersOnlineList"); div.innerHTML = "";
+        snap.forEach(doc => {
+            let d = doc.data(); if(currentUserData && doc.id === currentUserData.uid) return;
+            let item = document.createElement("div"); item.className = "u-item";
+            item.onclick = () => openChatWindow(d.username, doc.id);
+            item.innerHTML = `<img src="${d.photoURL || 'https://via.placeholder.com/40'}" style="width:35px; height:35px; border-radius:50%; object-fit:cover; margin-right:10px;">
+                              <span>${d.username} (${d.status || 'offline'})</span>`;
+            div.appendChild(item);
+        });
+    });
+}
 
-            if(!title || !content) {
-                alert('ခေါင်းစဉ်နှင့် အကြောင်းအရာကို ပြည့်စုံစွာ ဖြည့်စွက်ပေးပါဗျာ။');
-                return;
-            }
+// ပို့စ်အသစ်တင်ခြင်း (စာ၊ ဓာတ်ပုံ၊ သီချင်း၊ ဗီဒီယို)
+function createPost(){
+    let txt = document.getElementById("postText").value.trim();
+    if(!txt && !postBase64Image && !postBase64Audio && !postBase64Video) return;
+    
+    db.collection("posts").add({
+        authorName: currentUserData.username, 
+        authorUid: currentUserData.uid, 
+        authorPhoto: currentUserData.photoURL || "",
+        text: txt, 
+        imageURL: postBase64Image, 
+        audioURL: postBase64Audio,
+        videoURL: postBase64Video,
+        likes: [], 
+        timestamp: firebase.firestore.FieldValue.serverTimestamp()
+    }).then(() => { 
+        document.getElementById("postText").value = ""; 
+        postBase64Image = ""; postBase64Audio = ""; postBase64Video = "";
+        document.getElementById("postImagePreview").style.display = "none";
+    }).catch(e => {
+        alert("ပို့စ်တင်မရပါ (ဖိုင်အရွယ်အစား ၁ မက်ဂါဘိုက်ထက် ကြီးနေခြင်းဖြစ်နိုင်ပါသည်)");
+    });
+}
 
-            const newPost = {
-                title: title,
-                content: content,
-                mediaUrl: mediaUrl,
-                bgMusicUrl: bgMusicUrl,
-                author: currentUsername,
-                time: new Date().toLocaleTimeString() + ' ' + new Date().toLocaleDateString()
-            };
-
-            database.ref('posts').push(newPost).then(() => {
-                alert('ပို့စ်တင်ခြင်း အောင်မြင်ပါပြီဗျာ!');
-                document.getElementById('postTitle').value = '';
-                document.getElementById('postContent').value = '';
-                document.getElementById('mediaUrl').value = '';
-                document.getElementById('bgMusicUrl').value = '';
-            }).catch((err) => {
-                alert('ဆာဗာအမှားတစ်ခု ဖြစ်ပွားခဲ့ပါသည် - ' + err.message);
-            });
-        }
-
-        function askAI() {
-            const q = document.getElementById('aiQuestion').value.trim();
-            if(!q) return;
-            const body = document.getElementById('aiChatBody');
+// ပင်မ Feed နှင့် Watch (ဗီဒီယို) များကို Real-time ဖတ်ခြင်း
+function listenPosts(){
+    postsUnsubscribe = db.collection("posts").orderBy("timestamp", "desc").onSnapshot(snap => {
+        let feed = document.getElementById("feedPosts"); feed.innerHTML = "";
+        let watch = document.getElementById("watchVideos"); watch.innerHTML = "";
+        
+        snap.forEach(doc => {
+            let p = doc.data(); let pid = doc.id;
+            let time = p.timestamp ? new Date(p.timestamp.toDate()).toLocaleString() : "ခုနက";
+            let isL = p.likes && p.likes.includes(currentUserData.uid);
             
-            // User query
-            body.innerHTML += `<div class="bg-gray-200 text-gray-800 p-2 rounded-lg max-w-[85%] ml-auto text-right">${q}</div>`;
-            document.getElementById('aiQuestion').value = '';
-            
-            setTimeout(() => {
-                body.innerHTML += `<div class="bg-teal-100 text-teal-900 p-2 rounded-lg max-w-[85%]">ကျွန်တော် Happy AI ပါဗျာ။ အွန်လိုင်းစနစ် ချိတ်ဆက်မှု ကောင်းမွန်နေပါပြီ။ သင့်ဆီက ပိုစ်အသစ်တွေကို စောင့်မျှော်နေပါတယ်!</div>`;
-                body.scrollTop = body.scrollHeight;
-            }, 800);
-        }
-    </script>
+            // 📰 Feed Card တည်ဆောက်ခြင်း
+            let card = document.createElement("div"); card.className = "post-card";
+            card.innerHTML = `
+                <div class="post-header">
+                    <img class="post-avatar" src="${p.authorPhoto || 'https://via.placeholder.com/40'}">
+                    <div><div class="post-author">${p.authorName}</div><div class="post-time">${time}</div></div>
+                </div>
+                <div style="font-size:15px; line-height:1.4; white-space:pre-wrap;">${p.text}</div>
+                ${p.imageURL ? `<img class="post-img" src="${p.imageURL}">` : ""}
+                ${p.audioURL ? `<audio class="post-aud" controls src="${p.audioURL}"></audio>` : ""}
+                ${p.videoURL ? `<video class="post-vid" controls src="${p.videoURL}"></video>` : ""}
+                <div class="post-actions">
+                    <button class="like-btn" onclick="likePost('${pid}')">${isL ? '❤️' : '🤍'} Like (${p.likes ? p.likes.length : 0})</button>
+                </div>
+                <div class="comment-box" id="c-box-${pid}">Loading...</div>
+                <div class="c-input-area">
+                    <input id="c-in-${pid}" placeholder="Comment ရေးရန်...">
+                    <button onclick="addComment('${pid}')">ပို့</button>
+                </div>`;
+            feed.appendChild(card); 
+            listenComments(pid);
+
+            // 📺 Watch (ဗီဒီယိုသီးသန့် Feed) ထဲသို့ ဗီဒီယိုပါသော ပို့စ်များကို ထည့်သွင်းခြင်း
+            if(p.videoURL) {
+                let watchCard = document.createElement("div"); watchCard.className = "watch-card";
+                watchCard.innerHTML = `
+                    <video class="post-vid" style="max-height:400px;" controls src="${p.videoURL}"></video>
+                    <div class="watch-info">
+                        <div style="font-weight:bold; font-size:14px; margin-bottom:5px;">@${p.authorName}</div>
+                        <div style="font-size:12px; max-height:40px; overflow:hidden;">${p.text}</div>
+                    </div>`;
+                watch.appendChild(watchCard);
+            }
+        });
+        if(watch.innerHTML === "") watch.innerHTML = "တင်ထားသော ဗီဒီယိုများ မရှိသေးပါဗျာ။";
+    });
+}
+
+function likePost(pid){
+    let ref = db.collection("posts").doc(pid);
+    db.runTransaction(t => t.get(ref).then(doc => {
+        let l = doc.data().likes || [];
+        l = l.includes(currentUserData.uid) ? l.filter(id => id !== currentUserData.uid) : [...l, currentUserData.uid];
+        t.update(ref, { likes: l });
+    }));
+}
+function addComment(pid){
+    let input = document.getElementById(`c-in-${pid}`); if(!input.value.trim()) return;
+    db.collection("posts").doc(pid).collection("comments").add({ authorName: currentUserData.username, text: input.value.trim(), timestamp: firebase.firestore.FieldValue.serverTimestamp() }).then(() => input.value = "");
+}
+function listenComments(pid){
+    db.collection("posts").doc(pid).collection("comments").orderBy("timestamp", "asc").onSnapshot(snap => {
+        let box = document.getElementById(`c-box-${pid}`); box.innerHTML = "";
+        if(snap.empty) return box.style.display = "none"; box.style.display = "block";
+        snap.forEach(doc => { let c = doc.data(); let d = document.createElement("div"); d.className="comment-item"; d.innerHTML=`<span class="c-user">${c.authorName}:</span> ${c.text}`; box.appendChild(d); });
+    });
+}
+
+// သီးသန့် Chat စနစ်
+function openChatWindow(name, uid){
+    currentChatTargetUid = uid; document.getElementById("chatTitle").innerHTML = "💬 Chat with " + name;
+    document.getElementById("chatWindow").style.display = "flex"; listenMessages();
+}
+function closeChatWindow(){ document.getElementById("chatWindow").style.display = "none"; if(chatUnsubscribe) chatUnsubscribe(); }
+function sendMessage(){
+    let input = document.getElementById("chatInput"); if(!input.value.trim()) return;
+    let rID = currentUserData.uid < currentChatTargetUid ? `${currentUserData.uid}_${currentChatTargetUid}` : `${currentChatTargetUid}_${currentUserData.uid}`;
+    db.collection("private_rooms").doc(rID).collection("messages").add({ text: input.value.trim(), senderUid: currentUserData.uid, timestamp: firebase.firestore.FieldValue.serverTimestamp() }).then(() => input.value = "");
+}
+function listenMessages(){
+    if(chatUnsubscribe) chatUnsubscribe();
+    let rID = currentUserData.uid < currentChatTargetUid ? `${currentUserData.uid}_${currentChatTargetUid}` : `${currentChatTargetUid}_${currentUserData.uid}`;
+    chatUnsubscribe = db.collection("private_rooms").doc(rID).collection("messages").orderBy("timestamp", "asc").limitToLast(20).onSnapshot(snap => {
+        let box = document.getElementById("chatMessages"); box.innerHTML = "";
+        snap.forEach(doc => {
+            let m = doc.data(); let me = m.senderUid === currentUserData.uid;
+            let b = document.createElement("div"); b.className = `bubble ${me ? 'me' : 'other'}`; b.innerText = m.text; box.appendChild(b);
+        });
+        box.scrollTop = box.scrollHeight;
+    });
+}
+</script>
 </body>
 </html>
