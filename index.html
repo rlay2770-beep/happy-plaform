@@ -3,106 +3,272 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Happy Platform V4.0</title>
+<title>Happy Platform V6</title>
+
+<!-- Firebase SDK v8 -->
 <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
 <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
 <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
 
 <style>
-body { background:#0f172a; color:#f8fafc; font-family:sans-serif; margin:0; padding:0; padding-bottom:70px; }
-.header { background:#1e293b; padding:15px; text-align:center; font-weight:bold; font-size:20px; border-bottom:1px solid #334155; position:sticky; top:0; z-index:50; }
-.container { max-width:480px; margin:auto; padding:12px; box-sizing:border-box; }
-.page { display:none; }
-.page.active { display:block; }
+:root {
+  --bg-main: #0f172a;
+  --bg-card: #1e293b;
+  --bg-input: #334155;
+  --primary: #10b981;
+  --accent: #38bdf8;
+  --danger: #ef4444;
+  --text-main: #f8fafc;
+  --text-sub: #94a3b8;
+}
 
-/* 📱 Bottom Nav Bar (၄ ခု ဖြစ်သွားပြီ) */
-.nav-bar { position:fixed; bottom:0; left:0; right:0; background:#1e293b; display:flex; justify-content:space-around; border-top:1px solid #334155; padding:10px 0; z-index:100; max-width:480px; margin:auto; }
-.nav-item { color:#94a3b8; cursor:pointer; font-size:12px; text-align:center; flex:1; background:none; border:none; outline:none; font-weight:bold; }
-.nav-item.active { color:#38bdf8; }
-.nav-item span { display:block; font-size:20px; margin-bottom:2px; }
+body {
+  background: var(--bg-main);
+  color: var(--text-main);
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  margin: 0;
+  padding: 0;
+  padding-bottom: 70px;
+}
 
-/* 📰 Feed & Upload UI */
-.create-post { background:#1e293b; padding:15px; border-radius:12px; margin-bottom:15px; border:1px solid #334155; }
-textarea { width:100%; height:70px; background:#0f172a; color:white; border:1px solid #334155; border-radius:8px; padding:10px; box-sizing:border-box; resize:none; outline:none; }
-button { background:#38bdf8; color:#0f172a; font-weight:bold; border:none; padding:10px 15px; border-radius:8px; cursor:pointer; margin-top:8px; }
-.media-btns { display:flex; gap:5px; flex-wrap:wrap; margin-top:5px; }
-.media-btns button { font-size:11px; padding:6px 10px; }
+.header {
+  background: var(--bg-card);
+  padding: 15px;
+  text-align: center;
+  font-weight: bold;
+  font-size: 18px;
+  border-bottom: 1px solid var(--bg-input);
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  color: var(--primary);
+}
 
-.post-card { background:#1e293b; border:1px solid #334155; padding:15px; border-radius:12px; margin-bottom:12px; box-shadow:0 4px 6px rgba(0,0,0,0.2); }
-.post-header { display:flex; align-items:center; gap:10px; margin-bottom:10px; }
-.post-avatar { width:38px; height:38px; border-radius:50%; object-fit:cover; background:#475569; }
-.post-author { font-weight:bold; color:#f1f5f9; font-size:14px; }
-.post-time { font-size:11px; color:#64748b; }
-.post-img, .post-vid { width:100%; border-radius:8px; margin-top:10px; max-height:280px; object-fit:cover; background:#000; }
-.post-aud { width:100%; margin-top:10px; }
-.post-actions { margin-top:10px; border-top:1px solid #334155; padding-top:8px; }
-.like-btn { background:none; color:#cbd5e1; padding:5px; font-size:13px; }
+.container {
+  max-width: 480px;
+  margin: auto;
+  padding: 12px;
+  box-sizing: border-box;
+}
 
-/* 💬 Comment & Private Chat */
-.comment-box { background:#0f172a; padding:8px; border-radius:8px; margin-top:8px; font-size:13px; }
-.comment-item { padding:4px 0; border-bottom:1px solid #1e293b; }
-.c-user { font-weight:bold; color:#f59e0b; }
-.c-input-area { display:flex; margin-top:5px; }
-.c-input-area input { flex:1; background:#1e293b; color:white; border:1px solid #334155; padding:6px; border-radius:4px 0 0 4px; outline:none; }
-.c-input-area button { margin:0; padding:6px 12px; border-radius:0 4px 4px 0; }
-.auth-box { background:#1e293b; padding:20px; border-radius:15px; margin-top:40px; border:1px solid #334155; }
-.auth-box input { width:100%; padding:12px; margin:8px 0; background:#0f172a; color:white; border:1px solid #334155; border-radius:8px; box-sizing:border-box; outline:none; }
-.profile-card { background:#1e293b; padding:20px; border-radius:12px; text-align:center; border:1px solid #334155; }
-.p-photo { width:100px; height:100px; border-radius:50%; object-fit:cover; border:3px solid #38bdf8; margin:auto; display:block; background:#fff; }
-.u-item { display:flex; align-items:center; padding:10px; background:#1e293b; margin-bottom:8px; border-radius:8px; }
-.chat-window { display:none; position:fixed; top:55px; bottom:60px; left:0; right:0; background:#0f172a; max-width:480px; margin:auto; z-index:80; flex-direction:column; }
-.chat-msgs { flex:1; padding:15px; overflow-y:auto; display:flex; flex-direction:column; gap:8px; }
-.bubble { padding:8px 12px; border-radius:12px; max-width:75%; word-break:break-all; font-size:14px; }
-.me { background:#0284c7; align-self:flex-end; }
-.other { background:#334155; align-self:flex-start; }
+.page { display: none; }
+.page.active { display: block; }
 
-/* 📺 Watch (TikTok Style Reels View) */
-.watch-container { display:flex; flex-direction:column; gap:15px; }
-.watch-card { background:#000; border-radius:12px; overflow:hidden; position:relative; border:1px solid #334155; }
-.watch-info { position:absolute; bottom:15px; left:15px; right:15px; z-index:10; background:rgba(0,0,0,0.6); padding:10px; border-radius:8px; }
+/* 📱 Bottom Navigation */
+.nav-bar {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: var(--bg-card);
+  display: flex;
+  justify-content: space-around;
+  border-top: 1px solid var(--bg-input);
+  padding: 8px 0;
+  z-index: 100;
+  max-width: 480px;
+  margin: auto;
+}
+
+.nav-item {
+  color: var(--text-sub);
+  cursor: pointer;
+  font-size: 11px;
+  text-align: center;
+  flex: 1;
+  background: none;
+  border: none;
+  outline: none;
+  font-weight: 600;
+}
+
+.nav-item.active { color: var(--accent); }
+.nav-item span { display: block; font-size: 18px; margin-bottom: 2px; }
+
+/* 🔑 Auth Box */
+.auth-box {
+  background: var(--bg-card);
+  padding: 24px;
+  border-radius: 16px;
+  margin-top: 30px;
+  border: 1px solid var(--bg-input);
+}
+
+input, button, textarea {
+  font-family: inherit;
+}
+
+.input-field {
+  width: 100%;
+  padding: 12px;
+  margin: 8px 0;
+  background: var(--bg-main);
+  color: white;
+  border: 1px solid var(--bg-input);
+  border-radius: 8px;
+  box-sizing: border-box;
+  outline: none;
+}
+
+.btn {
+  background: var(--primary);
+  color: #0f172a;
+  font-weight: bold;
+  border: none;
+  padding: 10px 16px;
+  border-radius: 8px;
+  cursor: pointer;
+  margin-top: 6px;
+  width: 100%;
+}
+
+.btn-secondary { background: var(--bg-input); color: white; }
+.btn-danger { background: var(--danger); color: white; }
+.btn-accent { background: var(--accent); color: #0f172a; }
+
+/* 📰 Feed & Posts */
+.create-post {
+  background: var(--bg-card);
+  padding: 15px;
+  border-radius: 12px;
+  margin-bottom: 15px;
+  border: 1px solid var(--bg-input);
+}
+
+textarea {
+  width: 100%;
+  height: 70px;
+  background: var(--bg-main);
+  color: white;
+  border: 1px solid var(--bg-input);
+  border-radius: 8px;
+  padding: 10px;
+  box-sizing: border-box;
+  resize: none;
+  outline: none;
+}
+
+.media-btns { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 8px; }
+.media-btns button { font-size: 11px; padding: 6px 10px; width: auto; margin: 0; }
+
+.post-card {
+  background: var(--bg-card);
+  border: 1px solid var(--bg-input);
+  padding: 15px;
+  border-radius: 12px;
+  margin-bottom: 12px;
+  position: relative;
+}
+
+.post-header { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
+.post-avatar { width: 40px; height: 40px; border-radius: 50%; object-fit: cover; background: #475569; }
+.post-author { font-weight: bold; color: var(--text-main); font-size: 14px; }
+.post-time { font-size: 11px; color: var(--text-sub); }
+.post-img, .post-vid { width: 100%; border-radius: 8px; margin-top: 10px; max-height: 350px; object-fit: contain; background: #000; }
+.post-aud { width: 100%; margin-top: 10px; }
+
+.post-actions {
+  margin-top: 10px;
+  border-top: 1px solid var(--bg-input);
+  padding-top: 8px;
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.reaction-btn { background: var(--bg-input); color: var(--text-main); padding: 4px 8px; font-size: 12px; border-radius: 6px; border: none; cursor: pointer; }
+
+.comment-box { background: var(--bg-main); padding: 8px; border-radius: 8px; margin-top: 8px; font-size: 13px; }
+.comment-item { padding: 4px 0; border-bottom: 1px solid var(--bg-card); display: flex; justify-content: space-between; align-items: center; }
+.c-user { font-weight: bold; color: #f59e0b; }
+.c-input-area { display: flex; margin-top: 6px; }
+.c-input-area input { flex: 1; background: var(--bg-card); color: white; border: 1px solid var(--bg-input); padding: 6px 10px; border-radius: 6px 0 0 6px; outline: none; margin: 0; }
+.c-input-area button { margin: 0; padding: 6px 12px; border-radius: 0 6px 6px 0; width: auto; }
+
+/* 👤 Profile Area */
+.profile-card { background: var(--bg-card); padding: 20px; border-radius: 12px; text-align: center; border: 1px solid var(--bg-input); }
+.p-photo { width: 100px; height: 100px; border-radius: 50%; object-fit: cover; border: 3px solid var(--primary); margin: auto; display: block; background: #fff; }
+
+/* 🛠️ Menu Features Grid */
+.menu-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 15px; }
+.menu-card { background: var(--bg-card); padding: 15px; border-radius: 10px; text-align: center; border: 1px solid var(--bg-input); cursor: pointer; }
+.menu-card h4 { margin: 8px 0 0 0; font-size: 14px; }
+
+/* 💬 Chat Box */
+.u-item { display: flex; align-items: center; padding: 10px; background: var(--bg-card); margin-bottom: 8px; border-radius: 8px; cursor: pointer; }
+.chat-window { display: none; position: fixed; top: 55px; bottom: 60px; left: 0; right: 0; background: var(--bg-main); max-width: 480px; margin: auto; z-index: 80; flex-direction: column; }
+.chat-msgs { flex: 1; padding: 15px; overflow-y: auto; display: flex; flex-direction: column; gap: 8px; }
+.bubble { padding: 8px 12px; border-radius: 12px; max-width: 75%; word-break: break-all; font-size: 14px; }
+.me { background: #0284c7; align-self: flex-end; }
+.other { background: var(--bg-input); align-self: flex-start; }
 </style>
 </head>
 <body>
 
-<div class="header">🚀 Happy Platform v4.0</div>
+<div class="header">🚀 Happy Platform V6</div>
 
 <div class="container">
+    <div id="status" style="font-size:12px; color:var(--accent); text-align:center; margin-bottom:8px;"></div>
+
     <!-- 🔑 Auth Page -->
     <div id="authPage" class="auth-box">
-        <h3>Welcome</h3>
-        <input id="username" type="text" placeholder="Username">
-        <input id="email" type="email" placeholder="Email">
-        <input id="password" type="password" placeholder="Password">
-        <button style="width:100%;" onclick="registerUser()">အကောင့်အသစ်ဖွင့်မည်</button>
-        <button style="width:100%; background:#475569; color:white;" onclick="loginUser()">Login ဝင်မည်</button>
+        <h3 style="margin-top:0; text-align:center;">Welcome Back</h3>
+        <input id="username" class="input-field" type="text" placeholder="Username (နာမည်)">
+        <input id="email" class="input-field" type="email" placeholder="Email">
+        <input id="password" class="input-field" type="password" placeholder="Password">
+        <button class="btn" onclick="registerUser()">အကောင့်အသစ်ဖွင့်မည်</button>
+        <button class="btn btn-secondary" onclick="loginUser()">Login ဝင်မည်</button>
+        <button class="btn btn-secondary" style="font-size:12px; background:none;" onclick="resetPassword()">Forgot Password?</button>
     </div>
 
-    <!-- 📰 Feed Page (ဓာတ်ပုံ၊ သီချင်း၊ ဗီဒီယို အစုံကြည့်ရန်) -->
+    <!-- 📰 Feed Page -->
     <div id="feedPage" class="page">
         <div class="create-post">
             <textarea id="postText" placeholder="ယနေ့အတွက် ဘာတွေးနေလဲ..."></textarea>
             
             <div class="media-btns">
-                <button style="background:#475569; color:white;" onclick="document.getElementById('postPhotoInput').click()">📷 ဓာတ်ပုံ</button>
-                <button style="background:#eab308; color:#0f172a;" onclick="document.getElementById('postAudioInput').click()">🎵 သီချင်း/အသံ</button>
-                <button style="background:#ef4444; color:white;" onclick="document.getElementById('postVideoInput').click()">📺 ဗီဒီယိုတင်ရန်</button>
+                <button class="btn btn-secondary" onclick="document.getElementById('postPhotoInput').click()">📷 ဓာတ်ပုံ</button>
+                <button class="btn btn-secondary" onclick="document.getElementById('postAudioInput').click()">🎵 သီချင်း/အသံ</button>
+                <button class="btn btn-accent" onclick="document.getElementById('postVideoInput').click()">📺 ဗီဒီယို</button>
             </div>
 
-            <!-- Hidden Inputs -->
             <input type="file" id="postPhotoInput" style="display:none;" accept="image/*">
             <input type="file" id="postAudioInput" style="display:none;" accept="audio/*">
             <input type="file" id="postVideoInput" style="display:none;" accept="video/*">
             
-            <div id="uploadStatus" style="font-size:12px; color:#38bdf8; margin-top:5px; display:none;">ဖိုင်ကို ချုံ့နေပါသည်... ခေတ္တစောင့်ပါ ⏳</div>
-            <button style="width:100%; margin-top:10px;" onclick="createPost()">Post တင်မည် 🚀</button>
+            <div id="uploadStatus" style="font-size:12px; color:var(--accent); margin-top:5px; display:none;">ဖိုင် တင်နေပါသည်... ခေတ္တစောင့်ပါ ⏳</div>
+            <button id="submitBtn" class="btn" style="margin-top:10px;" onclick="createPost()">Post တင်မည် 🚀</button>
         </div>
         <div id="feedPosts">Loading posts...</div>
     </div>
 
-    <!-- 📺 Watch Page (ဗီဒီယို သီးသန့်ကြည့်ရန် နေရာသစ်) -->
+    <!-- 📺 Watch Page -->
     <div id="watchPage" class="page">
-        <h3>📺 Popular Videos (Reels)</h3>
-        <div id="watchVideos" class="watch-container">No videos yet.</div>
+        <h3>📺 Popular Videos</h3>
+        <div id="watchVideos">No videos yet.</div>
+    </div>
+
+    <!-- 🛠️ Features / Menu Page -->
+    <div id="menuPage" class="page">
+        <h3>🛠️ Smart Tools</h3>
+        <div class="menu-grid">
+            <div class="menu-card" onclick="alert('Smart ID ကို နောက် ဗားရှင်းမှာ ထည့်ပေးပါမည်')">
+                <span style="font-size:24px;">🪪</span>
+                <h4>Smart ID</h4>
+            </div>
+            <div class="menu-card" onclick="alert('QR Scanner ကို နောက် ဗားရှင်းမှာ ထည့်ပေးပါမည်')">
+                <span style="font-size:24px;">📷</span>
+                <h4>QR Scanner</h4>
+            </div>
+            <div class="menu-card" onclick="alert('AI Assistant ကို နောက် ဗားရှင်းမှာ ထည့်ပေးပါမည်')">
+                <span style="font-size:24px;">🤖</span>
+                <h4>AI Assistant</h4>
+            </div>
+            <div class="menu-card" onclick="alert('Settings စနစ် လုပ်ဆောင်နေပါသည်')">
+                <span style="font-size:24px;">⚙️</span>
+                <h4>Settings</h4>
+            </div>
+        </div>
     </div>
 
     <!-- 💬 Chat List Page -->
@@ -116,75 +282,80 @@ button { background:#38bdf8; color:#0f172a; font-weight:bold; border:none; paddi
         <div class="profile-card">
             <img id="profileImage" class="p-photo" src="https://via.placeholder.com/100">
             <input type="file" id="photoInput" style="display:none;" accept="image/*">
-            <button style="background:#475569; color:white; padding:6px 12px; font-size:12px;" onclick="document.getElementById('photoInput').click()">📷 ပုံပြောင်းရန်</button>
-            <h2 id="profileName">-</h2>
-            <p id="profileEmail" style="color:#64748b;">-</p>
-            <p id="profileBio">-</p>
-            <input id="newBio" placeholder="Bio အသစ်ပြင်ရန်" style="width:80%; padding:8px; background:#0f172a; color:white; border:1px solid #334155; border-radius:6px;">
-            <button onclick="updateProfile()">Update Profile</button>
-            <button style="background:#ef4444; color:white; width:80%; margin-top:15px;" onclick="logoutUser()">Logout ထွက်မည်</button>
+            <button class="btn btn-secondary" style="padding:6px 12px; font-size:12px; width:auto; margin-top:10px;" onclick="document.getElementById('photoInput').click()">📷 Profile ပြောင်းရန်</button>
+            <h2 id="profileName" style="margin:10px 0 2px 0;">-</h2>
+            <p id="profileEmail" style="color:var(--text-sub); margin:0 0 10px 0; font-size:13px;">-</p>
+            <p id="profileBio" style="font-style:italic;">-</p>
+            <input id="newBio" class="input-field" placeholder="Bio အသစ်ပြင်ရန်">
+            <button class="btn" onclick="updateProfile()">Update Profile</button>
+            <button class="btn btn-danger" style="margin-top:15px;" onclick="logoutUser()">Logout ထွက်မည်</button>
         </div>
     </div>
 </div>
 
 <!-- 💬 Private Chat Sub-window -->
 <div id="chatWindow" class="chat-window">
-    <div style="background:#1e293b; padding:12px; font-weight:bold; display:flex; justify-content:space-between; align-items:center;">
+    <div style="background:var(--bg-card); padding:12px; font-weight:bold; display:flex; justify-content:space-between; align-items:center;">
         <span id="chatTitle">Chat</span>
-        <button style="margin:0; padding:4px 10px; background:#ef4444; color:white;" onclick="closeChatWindow()">ပိတ်မည်</button>
+        <button class="btn btn-danger" style="margin:0; padding:4px 10px; width:auto;" onclick="closeChatWindow()">ပိတ်မည်</button>
     </div>
     <div class="chat-msgs" id="chatMessages"></div>
-    <div style="display:flex; padding:8px; background:#1e293b;">
-        <input id="chatInput" style="flex:1; padding:10px; border-radius:6px 0 0 6px; border:none; outline:none;" placeholder="စာရိုက်ပါ...">
-        <button style="margin:0; border-radius:0 6px 6px 0;" onclick="sendMessage()">ပို့မည်</button>
+    <div style="display:flex; padding:8px; background:var(--bg-card);">
+        <input id="chatInput" class="input-field" style="margin:0; border-radius:6px 0 0 6px;" placeholder="စာရိုက်ပါ...">
+        <button class="btn" style="margin:0; border-radius:0 6px 6px 0; width:auto;" onclick="sendMessage()">ပို့မည်</button>
     </div>
 </div>
 
-<!-- 📱 Tabs Menu Navigation (၄ ခု ဖြစ်သွားပြီ) -->
+<!-- 📱 Bottom Navigation -->
 <div id="navBar" class="nav-bar" style="display:none;">
     <button id="tab-feed" class="nav-item active" onclick="switchPage('feed')"><span>📰</span>Feed</button>
     <button id="tab-watch" class="nav-item" onclick="switchPage('watch')"><span>📺</span>Watch</button>
+    <button id="tab-menu" class="nav-item" onclick="switchPage('menu')"><span>🛠️</span>Tools</button>
     <button id="tab-chat" class="nav-item" onclick="switchPage('chat')"><span>💬</span>Chat</button>
     <button id="tab-profile" class="nav-item" onclick="switchPage('profile')"><span>👤</span>Profile</button>
 </div>
 
 <script>
-  const firebaseConfig = {
+const firebaseConfig = {
     apiKey: "AIzaSyCgamnl5ZozPJpPJ5hzbpgGeYm-hXdl8Ug",
     authDomain: "happy-platform-eb6c1.firebaseapp.com",
     projectId: "happy-platform-eb6c1",
     appId: "1:989734830184:web:69a30b6f84643c14303bdd"
 };
 firebase.initializeApp(firebaseConfig);
+
+firebase.firestore().enablePersistence().catch(err => {});
 const db = firebase.firestore();
 
-let base64Image = "", postBase64Image = "", postBase64Audio = "", postBase64Video = "", currentUserData = null;
-let currentChatTargetUid = null, chatUnsubscribe = null, usersListUnsubscribe = null, postsUnsubscribe = null;
+// ☁️ Cloudinary Configurations
+const CLOUDINARY_URL = "https://api.cloudinary.com/v1_1/YOUR_CLOUD_NAME/video/upload";
+const CLOUDINARY_PRESET = "YOUR_UPLOAD_PRESET";
 
-// စာမျက်နှာ ကူးပြောင်းခြင်း စနစ်
+let base64Image = "", postBase64Image = "", postBase64Audio = "", postVideoURL = "", currentUserData = null;
+let currentChatTargetUid = null, chatUnsubscribe = null, postsUnsubscribe = null;
+
 function switchPage(pageName) {
     document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
     document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
-    
     let activePage = document.getElementById(pageName + 'Page');
     if(activePage) activePage.classList.add('active');
-    
     let activeTab = document.getElementById('tab-' + pageName);
     if(activeTab) activeTab.classList.add('active');
     if(pageName !== 'chat') closeChatWindow();
 }
 
-// ဖိုင်များ ရွေးချယ်ခြင်းနှင့် Base64 ပြောင်းလဲခြင်း စနစ်များ
+// 🖼️ Profile Photo Auto-Compressor
 document.getElementById("photoInput").addEventListener("change", e => {
-    compressImg(e.target.files[0], base64 => { base64Image = base64; document.getElementById("profileImage").src = base64; });
+    compressImg(e.target.files[0], 300, 300, base64 => { 
+        base64Image = base64; 
+        document.getElementById("profileImage").src = base64; 
+    });
 });
 
 document.getElementById("postPhotoInput").addEventListener("change", e => {
     showLoading(true);
-    compressImg(e.target.files[0], base64 => { 
+    compressImg(e.target.files[0], 600, 600, base64 => { 
         postBase64Image = base64; 
-        let pre = document.getElementById("postImagePreview"); 
-        pre.src = base64; pre.style.display = "block"; 
         showLoading(false);
     });
 });
@@ -199,75 +370,102 @@ document.getElementById("postAudioInput").addEventListener("change", e => {
 });
 
 document.getElementById("postVideoInput").addEventListener("change", e => {
+    let file = e.target.files[0];
+    if (!file) return;
+
     showLoading(true);
-    fileToBase64(e.target.files[0], base64 => {
-        postBase64Video = base64;
-        alert("📺 ဗီဒီယိုဖိုင် ထည့်သွင်းပြီးပါပြီ (ဖိုင်အတိုလေးများသာ စမ်းသပ်ပါရန်)");
+    let formData = new FormData();
+    formData.append("file", file);
+    formData.append("upload_preset", CLOUDINARY_PRESET);
+
+    fetch(CLOUDINARY_URL, { method: "POST", body: formData })
+    .then(res => res.json())
+    .then(data => {
+        if(data.secure_url) {
+            postVideoURL = data.secure_url;
+            alert("📺 ဗီဒီယို တင်ပြီးပါပြီ။");
+        } else {
+            alert("⚠️ Cloudinary Configurations များ ထည့်သွင်းရန် လိုအပ်ပါသည်။");
+        }
+        showLoading(false);
+    })
+    .catch(() => {
+        alert("❌ Video Upload မအောင်မြင်ပါ");
         showLoading(false);
     });
 });
 
 function showLoading(show) {
     document.getElementById("uploadStatus").style.display = show ? "block" : "none";
+    document.getElementById("submitBtn").disabled = show;
 }
 
-// Image Compressor
-function compressImg(file, callback) {
+function compressImg(file, maxW, maxH, callback) {
     if(!file) return;
     let r = new FileReader(); r.onload = ev => {
         let img = new Image(); img.onload = () => {
             let cv = document.createElement('canvas'); let ctx = cv.getContext('2d');
-            cv.width = 300; cv.height = 300; ctx.drawImage(img, 0, 0, 300, 300);
-            callback(cv.toDataURL('image/jpeg', 0.4));
+            cv.width = maxW; cv.height = maxH; ctx.drawImage(img, 0, 0, maxW, maxH);
+            callback(cv.toDataURL('image/jpeg', 0.7));
         }; img.src = ev.target.result;
     }; r.readAsDataURL(file);
 }
 
-// Audio/Video Base64 Converter
 function fileToBase64(file, callback) {
     if(!file) return;
-    let r = new FileReader();
-    r.onload = ev => { callback(ev.target.result); };
-    r.readAsDataURL(file);
+    let r = new FileReader(); r.onload = ev => { callback(ev.target.result); }; r.readAsDataURL(file);
 }
 
-// အကောင့်ဖွင့်/ဝင် စနစ်
+// Auth Handlers
 function registerUser(){
-    let name = document.getElementById("username").value.trim(), email = document.getElementById("email").value.trim(), pass = document.getElementById("password").value;
-    if(!name || !email || !pass) return alert("ဖြည့်စွက်ပါ");
+    let name = document.getElementById("username").value.trim();
+    let email = document.getElementById("email").value.trim();
+    let pass = document.getElementById("password").value;
+    if(!name || !email || !pass) return alert("အချက်အလက်များ ဖြည့်ပေးပါ");
+
     firebase.auth().createUserWithEmailAndPassword(email, pass).then(cred => {
-        return db.collection("users").doc(cred.user.uid).set({ email, username: name, bio: "Hello", photoURL: "", createdAt: new Date().toISOString(), status: "online" });
+        return db.collection("users").doc(cred.user.uid).set({ 
+            email, username: name, bio: "Hello", photoURL: "", createdAt: new Date().toISOString(), status: "online" 
+        });
     }).catch(e => alert(e.message));
 }
+
 function loginUser(){
-    let email = document.getElementById("email").value.trim(), pass = document.getElementById("password").value;
-    firebase.auth().signInWithEmailAndPassword(email, pass).then(cred => {
-        db.collection("users").doc(cred.user.uid).update({ status: "online" });
-    }).catch(e => alert(e.message));
+    let email = document.getElementById("email").value.trim();
+    let pass = document.getElementById("password").value;
+    firebase.auth().signInWithEmailAndPassword(email, pass).catch(e => alert(e.message));
 }
+
+function resetPassword(){
+    let email = document.getElementById("email").value.trim();
+    if(!email) return alert("Email ရိုက်ထည့်ပေးပါ");
+    firebase.auth().sendPasswordResetEmail(email).then(() => alert("Password reset email ပို့ပြီးပါပြီ")).catch(e => alert(e.message));
+}
+
 function logoutUser(){
     let u = firebase.auth().currentUser;
     if(u) db.collection("users").doc(u.uid).update({ status: "offline" }).then(() => firebase.auth().signOut().then(() => window.location.reload()));
 }
+
 function updateProfile(){
     let u = firebase.auth().currentUser; if(!u) return;
     let bio = document.getElementById("newBio").value.trim(), up = {};
     if(bio) up["bio"] = bio; if(base64Image) up["photoURL"] = base64Image;
-    if(Object.keys(up).length > 0) db.collection("users").doc(u.uid).update(up).then(() => { alert("ပြင်ဆင်ပြီးပါပြီ"); document.getElementById("newBio").value=""; });
+    if(Object.keys(up).length > 0) db.collection("users").doc(u.uid).update(up).then(() => { alert("Profile ပြင်ဆင်ပြီးပါပြီ"); document.getElementById("newBio").value=""; });
 }
 
-// အမြဲတမ်း စောင့်ကြည့်နားထောင်သူ
 firebase.auth().onAuthStateChanged(user => {
     if(user){
         document.getElementById("authPage").style.display = "none";
         document.getElementById("navBar").style.display = "flex";
         switchPage('feed');
+        
         db.collection("users").doc(user.uid).onSnapshot(doc => {
             if(doc.exists){
                 currentUserData = doc.data(); currentUserData.uid = user.uid;
-                document.getElementById("profileName").innerHTML = currentUserData.username;
-                document.getElementById("profileEmail").innerHTML = currentUserData.email;
-                document.getElementById("profileBio").innerHTML = currentUserData.bio;
+                document.getElementById("profileName").innerText = currentUserData.username;
+                document.getElementById("profileEmail").innerText = currentUserData.email;
+                document.getElementById("profileBio").innerText = currentUserData.bio;
                 if(currentUserData.photoURL) document.getElementById("profileImage").src = currentUserData.photoURL;
             }
         });
@@ -279,7 +477,7 @@ firebase.auth().onAuthStateChanged(user => {
 });
 
 function listenUsers() {
-    usersListUnsubscribe = db.collection("users").onSnapshot(snap => {
+    db.collection("users").onSnapshot(snap => {
         let div = document.getElementById("usersOnlineList"); div.innerHTML = "";
         snap.forEach(doc => {
             let d = doc.data(); if(currentUserData && doc.id === currentUserData.uid) return;
@@ -292,10 +490,9 @@ function listenUsers() {
     });
 }
 
-// ပို့စ်အသစ်တင်ခြင်း (စာ၊ ဓာတ်ပုံ၊ သီချင်း၊ ဗီဒီယို)
 function createPost(){
     let txt = document.getElementById("postText").value.trim();
-    if(!txt && !postBase64Image && !postBase64Audio && !postBase64Video) return;
+    if(!txt && !postBase64Image && !postBase64Audio && !postVideoURL) return;
     
     db.collection("posts").add({
         authorName: currentUserData.username, 
@@ -304,19 +501,19 @@ function createPost(){
         text: txt, 
         imageURL: postBase64Image, 
         audioURL: postBase64Audio,
-        videoURL: postBase64Video,
-        likes: [], 
+        videoURL: postVideoURL,
+        reactions: {}, 
         timestamp: firebase.firestore.FieldValue.serverTimestamp()
     }).then(() => { 
         document.getElementById("postText").value = ""; 
-        postBase64Image = ""; postBase64Audio = ""; postBase64Video = "";
-        document.getElementById("postImagePreview").style.display = "none";
-    }).catch(e => {
-        alert("ပို့စ်တင်မရပါ (ဖိုင်အရွယ်အစား ၁ မက်ဂါဘိုက်ထက် ကြီးနေခြင်းဖြစ်နိုင်ပါသည်)");
+        postBase64Image = ""; postBase64Audio = ""; postVideoURL = "";
     });
 }
 
-// ပင်မ Feed နှင့် Watch (ဗီဒီယို) များကို Real-time ဖတ်ခြင်း
+function deletePost(pid) {
+    if(confirm("ဤ Post ကို ဖျက်မှာလား?")) db.collection("posts").doc(pid).delete();
+}
+
 function listenPosts(){
     postsUnsubscribe = db.collection("posts").orderBy("timestamp", "desc").onSnapshot(snap => {
         let feed = document.getElementById("feedPosts"); feed.innerHTML = "";
@@ -325,69 +522,80 @@ function listenPosts(){
         snap.forEach(doc => {
             let p = doc.data(); let pid = doc.id;
             let time = p.timestamp ? new Date(p.timestamp.toDate()).toLocaleString() : "ခုနက";
-            let isL = p.likes && p.likes.includes(currentUserData.uid);
+            let isMyPost = currentUserData && p.authorUid === currentUserData.uid;
             
-            // 📰 Feed Card တည်ဆောက်ခြင်း
             let card = document.createElement("div"); card.className = "post-card";
             card.innerHTML = `
+                ${isMyPost ? `<button class="btn btn-danger" style="width:auto; font-size:11px; padding:3px 8px; float:right;" onclick="deletePost('${pid}')">🗑️ ဖျက်မည်</button>` : ''}
                 <div class="post-header">
                     <img class="post-avatar" src="${p.authorPhoto || 'https://via.placeholder.com/40'}">
                     <div><div class="post-author">${p.authorName}</div><div class="post-time">${time}</div></div>
                 </div>
-                <div style="font-size:15px; line-height:1.4; white-space:pre-wrap;">${p.text}</div>
+                <div style="font-size:14px; line-height:1.4; white-space:pre-wrap;">${p.text}</div>
                 ${p.imageURL ? `<img class="post-img" src="${p.imageURL}">` : ""}
                 ${p.audioURL ? `<audio class="post-aud" controls src="${p.audioURL}"></audio>` : ""}
                 ${p.videoURL ? `<video class="post-vid" controls src="${p.videoURL}"></video>` : ""}
+                
                 <div class="post-actions">
-                    <button class="like-btn" onclick="likePost('${pid}')">${isL ? '❤️' : '🤍'} Like (${p.likes ? p.likes.length : 0})</button>
+                    <button class="reaction-btn" onclick="reactPost('${pid}', '❤️')">❤️</button>
+                    <button class="reaction-btn" onclick="reactPost('${pid}', '😆')">😆</button>
+                    <button class="reaction-btn" onclick="reactPost('${pid}', '😮')">😮</button>
+                    <span style="font-size:12px; color:var(--text-sub);">${p.reactions ? Object.keys(p.reactions).length : 0} Reactions</span>
                 </div>
+                
                 <div class="comment-box" id="c-box-${pid}">Loading...</div>
                 <div class="c-input-area">
                     <input id="c-in-${pid}" placeholder="Comment ရေးရန်...">
-                    <button onclick="addComment('${pid}')">ပို့</button>
+                    <button class="btn" onclick="addComment('${pid}')">ပို့</button>
                 </div>`;
             feed.appendChild(card); 
             listenComments(pid);
 
-            // 📺 Watch (ဗီဒီယိုသီးသန့် Feed) ထဲသို့ ဗီဒီယိုပါသော ပို့စ်များကို ထည့်သွင်းခြင်း
             if(p.videoURL) {
-                let watchCard = document.createElement("div"); watchCard.className = "watch-card";
-                watchCard.innerHTML = `
-                    <video class="post-vid" style="max-height:400px;" controls src="${p.videoURL}"></video>
-                    <div class="watch-info">
-                        <div style="font-weight:bold; font-size:14px; margin-bottom:5px;">@${p.authorName}</div>
-                        <div style="font-size:12px; max-height:40px; overflow:hidden;">${p.text}</div>
-                    </div>`;
+                let watchCard = document.createElement("div"); watchCard.className = "post-card";
+                watchCard.innerHTML = `<video class="post-vid" controls src="${p.videoURL}"></video>
+                                       <div style="font-weight:bold; margin-top:8px;">@${p.authorName}</div>
+                                       <div style="font-size:12px; color:var(--text-sub);">${p.text}</div>`;
                 watch.appendChild(watchCard);
             }
         });
-        if(watch.innerHTML === "") watch.innerHTML = "တင်ထားသော ဗီဒီယိုများ မရှိသေးပါဗျာ။";
     });
 }
 
-function likePost(pid){
+function reactPost(pid, type){
     let ref = db.collection("posts").doc(pid);
     db.runTransaction(t => t.get(ref).then(doc => {
-        let l = doc.data().likes || [];
-        l = l.includes(currentUserData.uid) ? l.filter(id => id !== currentUserData.uid) : [...l, currentUserData.uid];
-        t.update(ref, { likes: l });
+        let r = doc.data().reactions || {};
+        r[currentUserData.uid] = type;
+        t.update(ref, { reactions: r });
     }));
 }
+
 function addComment(pid){
     let input = document.getElementById(`c-in-${pid}`); if(!input.value.trim()) return;
-    db.collection("posts").doc(pid).collection("comments").add({ authorName: currentUserData.username, text: input.value.trim(), timestamp: firebase.firestore.FieldValue.serverTimestamp() }).then(() => input.value = "");
+    db.collection("posts").doc(pid).collection("comments").add({ 
+        authorName: currentUserData.username, 
+        authorUid: currentUserData.uid,
+        text: input.value.trim(), 
+        timestamp: firebase.firestore.FieldValue.serverTimestamp() 
+    }).then(() => input.value = "");
 }
+
 function listenComments(pid){
     db.collection("posts").doc(pid).collection("comments").orderBy("timestamp", "asc").onSnapshot(snap => {
         let box = document.getElementById(`c-box-${pid}`); box.innerHTML = "";
         if(snap.empty) return box.style.display = "none"; box.style.display = "block";
-        snap.forEach(doc => { let c = doc.data(); let d = document.createElement("div"); d.className="comment-item"; d.innerHTML=`<span class="c-user">${c.authorName}:</span> ${c.text}`; box.appendChild(d); });
+        snap.forEach(doc => { 
+            let c = doc.data();
+            let d = document.createElement("div"); d.className="comment-item"; 
+            d.innerHTML=`<div><span class="c-user">${c.authorName}:</span> ${c.text}</div>`; 
+            box.appendChild(d); 
+        });
     });
 }
 
-// သီးသန့် Chat စနစ်
 function openChatWindow(name, uid){
-    currentChatTargetUid = uid; document.getElementById("chatTitle").innerHTML = "💬 Chat with " + name;
+    currentChatTargetUid = uid; document.getElementById("chatTitle").innerText = "💬 Chat with " + name;
     document.getElementById("chatWindow").style.display = "flex"; listenMessages();
 }
 function closeChatWindow(){ document.getElementById("chatWindow").style.display = "none"; if(chatUnsubscribe) chatUnsubscribe(); }
